@@ -13,8 +13,8 @@
 - Allocating/Deallocating PlayerID is required.
 - -1 will be treated as null.
 ```c
-/** Nullable */
-class Player {
+/** Non-Nullable */
+struct Player {
     sock_t socket; /** socket of client. available when server. */
     /* Additional Parameters */
 };
