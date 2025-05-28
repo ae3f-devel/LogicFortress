@@ -1,4 +1,7 @@
-# Boos Room
+# Room
+> Following is the goal of this branch.  
+> We are using `ngo` library to do this things.
+
 - Multi
 
 # Goal
@@ -13,7 +16,6 @@
 - Allocating/Deallocating PlayerID is required.
 - -1 will be treated as null.
 ```c
-/** Non-Nullable */
 struct Player {
     sock_t socket; /** socket of client. available when server. */
     /* Additional Parameters */
@@ -33,15 +35,15 @@ struct Player {
 #define TEAM_MEMCOUNT   /** Count for one team members. */
 
 struct Room {
-    Player players[TEAM_MEMCOUNT];
     /* Additional Parameters. Usually for global settings. */
 };
 ```
 
 - Server would have something like this, playing a role of master list.
 ```c
-#define ROOM_MAXCOUNT   /** Max count for room */
-Room rooms[ROOM_MAXCOUNT];
+#define ROOM_MAXCOUNT           /** Max count for room */
+Room rooms[ROOM_MAXCOUNT];      /** This should be pre-allocated */
+Player players[TEAM_MEMCOUNT * ROOM_MAXCOUNT];  /** This should be pre-allocated to 0. */
 ```
 
 ## Room
