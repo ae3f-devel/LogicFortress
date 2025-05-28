@@ -1,6 +1,5 @@
 # Room
-> Following is the goal of this branch.  
-> We are using `ngo` library to do this things.
+- We will need cmake and builder to build this.
 
 - Multi
 
