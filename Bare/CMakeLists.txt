@@ -23,11 +23,14 @@ add_library(incCli  INTERFACE ${incCli-src})
 target_link_libraries(incSvr INTERFACE incCore)
 target_link_libraries(incCli INTERFACE incCore)
 
-target_compile_definitions(incSvr INTERFACE -DSERVER=1)
-target_compile_definitions(incCli INTERFACE -DSERVER=0)
-
 add_library(libSvr ${ae2f_LIBPREFIX} ${libSvr-src})
+add_library(libHost ${ae2f_LIBPREFIX} ${libSvr-src} ${libCli-src})
 add_library(libCli ${ae2f_LIBPREFIX} ${libCli-src})
 
+target_compile_definitions(libSvr PRIVATE SERVER=1)
+target_compile_definitions(libHost PRIVATE SERVER=1)
+target_compile_definitions(libCli PRIVATE SERVER=0)
+
 target_link_libraries(libCli PUBLIC incCli)
-target_link_libraries(libSvr PUBLIC incSvr PUBLIC libCli)
+target_link_libraries(libSvr PUBLIC incSvr)
+target_link_libraries(libHost PUBLIC incSvr PUBLIC incCli)

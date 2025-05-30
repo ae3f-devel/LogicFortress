@@ -2,6 +2,7 @@
 #define Req_h
 
 #include <stdint.h>
+
 typedef uint8_t req_t;
 
 #define REQ_ROOMLOBBY               0

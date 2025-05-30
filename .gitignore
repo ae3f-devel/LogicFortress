@@ -90,3 +90,4 @@ crashlytics-build.properties
 Bare/submod/*
 Bare/*.auto.*
 build/
+.cache

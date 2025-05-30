@@ -8,6 +8,7 @@
 #include "./Sock.h"
 
 #include <ae2f/Pack/Beg.h>
+#include "./Util.h"
 
 typedef struct Player {
     char        m_Name[MAX_PLAYER_NAME_COUNT];
@@ -18,7 +19,7 @@ typedef struct Player {
 #endif
 
 #ifdef __cplusplus
-    constexpr Player() : m_Name{0, }, m_sock(INVALID_SOCKET), m_addr{0, } {}
+    constexpr Player() : m_Name{0, } when_SERVER(, m_sock(INVALID_SOCKET), m_addr{0, }) {}
 #endif
 } Player;
 

@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.30)
 
+option(ae2f_IS_SHARED	"DLL EXPORT"	ON)
+
 set(MAX_ROOM_COUNT              20)
 set(MAX_ROOM_PLAYER_COUNT       6)
 set(MAX_ROOM_SPECTATOR_COUNT    2)
