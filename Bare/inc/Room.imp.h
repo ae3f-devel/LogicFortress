@@ -66,7 +66,7 @@
                      v_fromlen) != sizeof(room_t)) {                           \
           (*(retroom) = -1);                                                   \
         }                                                                      \
-        if (sockaddr_internal_check(                                           \
+        if (!sockaddr_internal_check(                                           \
                 v_from,                                                        \
                 ae2f_reinterpret_cast(sockaddr_internal_t *, svraddr))) {      \
           (*(retroom) = -1); /* invalid, socket address does not match. */     \
@@ -89,11 +89,13 @@
         break;                                                                 \
     }
 
-#define __IsRoomNFull(r, ret_i)                                                \
+#define __IsRoomNFull(r, ret_i, addr)                                                \
   if (ret_i)                                                                   \
     for (*(ret_i) = 0; *(ret_i) < MAX_ROOM_MEM_COUNT; (*(ret_i))++) {          \
-      if (__IsPlayerNull(Players + ((r) - Rooms) + *(ret_i)))                  \
+      if (__IsPlayerNull(Players + (((r) - Rooms) * MAX_ROOM_MEM_COUNT) + *(ret_i)))                  \
         break;                                                                 \
+        if(sockaddr_internal_check(ae2f_reinterpret_cast(const sockaddr_internal_t*, addr), ae2f_reinterpret_cast(const sockaddr_internal_t*, &(Players + (((r) - Rooms) * MAX_ROOM_MEM_COUNT) + *(ret_i))->m_addr))) \
+        break; \
     }
 
 #define __FindRoomNOccupied(reti)                                              \
@@ -115,7 +117,16 @@
                                                                                \
     if (!(retroom))                                                            \
       ;                                                                        \
-    else if ((room) == -1) {                                                   \
+    if((room) == -1) { \
+      globplayer_t v_globplayer_i;       \
+      __SetPlayerOffline(addr, &v_globplayer_i); \
+      if(v_globplayer_i != MAX_GLOBAL_PLAYER_COUNT) { \
+        dbg_puts("room was -1 and you are online."); \
+        dbg_printf("You are online here -> %d\n", v_globplayer_i); \
+        dbg_puts("Now you are being disconnected."); \
+        *(retroom) = -1; \
+      } \
+      else {                                                   \
       /** Making new room... */                                                \
       size_t reti;                                                             \
       __FindRoomNOccupied((&reti));                                            \
@@ -145,7 +156,7 @@
         else                                                                   \
           Players[reti * MAX_ROOM_MEM_COUNT].m_Name[0] = 0;                    \
       }                                                                        \
-    } else if (Rooms[room].m_started) {                                        \
+    }} else if (Rooms[room].m_started) {                                        \
       dbg_printf("This room[%d], is already started.\n", room);                \
       *(retroom) = -1;                                                         \
     } else {                                                                   \
@@ -157,7 +168,7 @@
         *(retroom) = -1;                                                       \
       } else {                                                                 \
         dbg_printf("The room %d is occupied by someone.\n", (room));           \
-        __IsRoomNFull(Rooms + (room), &reti);                                  \
+        __IsRoomNFull(Rooms + (room), &reti, addr);                                  \
         if (reti != MAX_ROOM_MEM_COUNT) {                                      \
           dbg_printf("The room %d is valid.\n", (room));                       \
           if (((pw) && !strncmp(Rooms[(room)].m_Pw, (pw),                      \
@@ -186,4 +197,5 @@
     }                                                                          \
     dbg_puts("Done gracully.");                                                \
   }
+
 #endif
