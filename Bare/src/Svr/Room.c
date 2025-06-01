@@ -3,6 +3,7 @@
 
 #define dbg_prefix "[RoomLobby] "
 
+
 ae2f_SHAREDEXPORT void RoomLobby(room_t room, room_t *retroom,
                                  const char *name_room, const char *pw,
                                  sock_t sock, const sockaddr_t *addr,

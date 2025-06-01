@@ -4,7 +4,11 @@
 #define dbg_prefix "[ReqRoomLobby] "
 
 ae2f_SHAREDEXPORT 
-void ReqRoomLobby(sock_t svrsock, const sockaddr_t* svraddr, room_t room, room_t* retroom, const char* name, const char* pw, const char* clientname) {
+void ReqRoomLobby(
+    sock_t svrsock, const sockaddr_t* svraddr
+    , room_t room, room_t* retroom, const char* name
+    , const char* pw, const char* clientname
+) {
     dbg_puts("Starting.");
     assertmsg((svrsock == -1) == SERVER);
     assertmsg(!svraddr == SERVER);
