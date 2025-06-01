@@ -9,6 +9,7 @@
 
 #include <ae2f/Pack/Beg.h>
 #include <time.h>
+#include "./Room.auto.h"
 
 /**
  * @brief
@@ -27,8 +28,6 @@ typedef struct Room {
 #include "./Req.h"
 
 #include <ae2f/Pack/End.h>
-
-typedef unsigned room_t;
 
 #pragma pack(push, 1)
 

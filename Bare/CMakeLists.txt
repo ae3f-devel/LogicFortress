@@ -5,6 +5,8 @@ project(Bare)
 
 configure_file(${PROJECT_SOURCE_DIR}/auto/Max.h ${PROJECT_SOURCE_DIR}/inc/Max.auto.h)
 configure_file(${PROJECT_SOURCE_DIR}/auto/Dbg.h ${PROJECT_SOURCE_DIR}/inc/Dbg.auto.h)
+configure_file(${PROJECT_SOURCE_DIR}/auto/Player.h ${PROJECT_SOURCE_DIR}/inc/Player.auto.h)
+configure_file(${PROJECT_SOURCE_DIR}/auto/Room.h ${PROJECT_SOURCE_DIR}/inc/Room.auto.h)
 
 file(GLOB incCore-src ${PROJECT_SOURCE_DIR}/inc/*)
 file(GLOB incSvr-src ${PROJECT_SOURCE_DIR}/inc/Svr/*)

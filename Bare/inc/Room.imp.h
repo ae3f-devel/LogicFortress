@@ -21,7 +21,7 @@
  *  additional when making new one [room number is -1]: \n
  *    [char[MAX_ROOM_NAME_COUNT]]  : room name   \n
  *    [char[MAX_ROOM_PW]]          : room passwd \n
- * 
+ *
  * v_res:
  *  [room_t]
  */
@@ -35,21 +35,20 @@
           RoomLobby(room, retroom, name, pw, svrsock, svraddr, clientname));   \
       when_CLIENT(*(retroom) = -1);                                            \
     } else {                                                                   \
-      __ReqRoomLobbyBuf v_req = { 0, }; \
+      __ReqRoomLobbyBuf v_req = {                                              \
+          0,                                                                   \
+      };                                                                       \
       size_t v_bytes;                                                          \
                                                                                \
-      v_req.m_req = REQ_ROOMLOBBY;                \
-      v_req.m_room = room;          \
+      v_req.m_req = REQ_ROOMLOBBY;                                             \
+      v_req.m_room = room;                                                     \
       if (clientname)                                                          \
-        strncpy(v_req.m_plname,                                               \
-                clientname, MAX_PLAYER_NAME_COUNT);                            \
+        strncpy(v_req.m_plname, clientname, MAX_PLAYER_NAME_COUNT);            \
       if ((room) == -1) {                                                      \
         if (name)                                                              \
-          strncpy(v_req.m_rname, (name),              \
-                  MAX_ROOM_NAME_COUNT);                                        \
+          strncpy(v_req.m_rname, (name), MAX_ROOM_NAME_COUNT);                 \
         if (pw)                                                                \
-          strncpy(v_req.m_rpwd,                                     \
-                  (pw), MAX_ROOM_PW);                                          \
+          strncpy(v_req.m_rpwd, (pw), MAX_ROOM_PW);                            \
       }                                                                        \
       v_bytes = sendto((svrsock), &v_req, sizeof(v_req), 0, (svraddr),         \
                        sizeof(sockaddr_internal_t));                           \
@@ -66,7 +65,7 @@
                      v_fromlen) != sizeof(room_t)) {                           \
           (*(retroom) = -1);                                                   \
         }                                                                      \
-        if (!sockaddr_internal_check(                                           \
+        if (!sockaddr_internal_check(                                          \
                 v_from,                                                        \
                 ae2f_reinterpret_cast(sockaddr_internal_t *, svraddr))) {      \
           (*(retroom) = -1); /* invalid, socket address does not match. */     \
@@ -89,13 +88,19 @@
         break;                                                                 \
     }
 
-#define __IsRoomNFull(r, ret_i, addr)                                                \
+#define __IsRoomNFull(r, ret_i, addr)                                          \
   if (ret_i)                                                                   \
     for (*(ret_i) = 0; *(ret_i) < MAX_ROOM_MEM_COUNT; (*(ret_i))++) {          \
-      if (__IsPlayerNull(Players + (((r) - Rooms) * MAX_ROOM_MEM_COUNT) + *(ret_i)))                  \
+      if (__IsPlayerNull(Players + (((r) - Rooms) * MAX_ROOM_MEM_COUNT) +      \
+                         *(ret_i)))                                            \
         break;                                                                 \
-        if(sockaddr_internal_check(ae2f_reinterpret_cast(const sockaddr_internal_t*, addr), ae2f_reinterpret_cast(const sockaddr_internal_t*, &(Players + (((r) - Rooms) * MAX_ROOM_MEM_COUNT) + *(ret_i))->m_addr))) \
-        break; \
+      if (sockaddr_internal_check(                                             \
+              ae2f_reinterpret_cast(const sockaddr_internal_t *, addr),        \
+              ae2f_reinterpret_cast(                                           \
+                  const sockaddr_internal_t *,                                 \
+                  &(Players + (((r) - Rooms) * MAX_ROOM_MEM_COUNT) + *(ret_i)) \
+                       ->m_addr)))                                             \
+        break;                                                                 \
     }
 
 #define __FindRoomNOccupied(reti)                                              \
@@ -117,46 +122,46 @@
                                                                                \
     if (!(retroom))                                                            \
       ;                                                                        \
-    if((room) == -1) { \
-      globplayer_t v_globplayer_i;       \
-      __SetPlayerOffline(addr, &v_globplayer_i); \
-      if(v_globplayer_i != MAX_GLOBAL_PLAYER_COUNT) { \
-        dbg_puts("room was -1 and you are online."); \
-        dbg_printf("You are online here -> %d\n", v_globplayer_i); \
-        dbg_puts("Now you are being disconnected."); \
-        *(retroom) = -1; \
-      } \
-      else {                                                   \
-      /** Making new room... */                                                \
-      size_t reti;                                                             \
-      __FindRoomNOccupied((&reti));                                            \
-      if (reti == MAX_ROOM_COUNT) {                                            \
-        dbg_puts("No room is available.");                                     \
+    if ((room) == -1) {                                                        \
+      globplayer_t v_globplayer_i;                                             \
+      __SetPlayerOffline(addr, &v_globplayer_i);                               \
+      if (v_globplayer_i != MAX_GLOBAL_PLAYER_COUNT) {                         \
+        dbg_puts("room was -1 and you are online.");                           \
+        dbg_printf("You are online here -> %d\n", v_globplayer_i);             \
+        dbg_puts("Now you are being disconnected.");                           \
         *(retroom) = -1;                                                       \
       } else {                                                                 \
-        dbg_printf("Room %d will be allocated.\n");                            \
-        *(retroom) = reti;                                                     \
-        if (name_room)                                                         \
-          strncpy(Rooms[reti].m_Name, name_room, MAX_ROOM_NAME_COUNT);         \
-        else                                                                   \
-          Rooms[reti].m_Name[0] = 0;                                           \
+        /** Making new room... */                                              \
+        size_t reti;                                                           \
+        __FindRoomNOccupied((&reti));                                          \
+        if (reti == MAX_ROOM_COUNT) {                                          \
+          dbg_puts("No room is available.");                                   \
+          *(retroom) = -1;                                                     \
+        } else {                                                               \
+          dbg_printf("Room %d will be allocated.\n");                          \
+          *(retroom) = reti;                                                   \
+          if (name_room)                                                       \
+            strncpy(Rooms[reti].m_Name, name_room, MAX_ROOM_NAME_COUNT);       \
+          else                                                                 \
+            Rooms[reti].m_Name[0] = 0;                                         \
                                                                                \
-        if (pw)                                                                \
-          strncpy(Rooms[reti].m_Pw, pw, MAX_ROOM_PW);                          \
-        else                                                                   \
-          Rooms[reti].m_Pw[0] = 0;                                             \
+          if (pw)                                                              \
+            strncpy(Rooms[reti].m_Pw, pw, MAX_ROOM_PW);                        \
+          else                                                                 \
+            Rooms[reti].m_Pw[0] = 0;                                           \
                                                                                \
-        Players[reti * MAX_ROOM_MEM_COUNT].m_sock = sock;                      \
-        if (addr)                                                              \
-          Players[reti * MAX_ROOM_MEM_COUNT].m_addr = *(addr);                 \
+          Players[reti * MAX_ROOM_MEM_COUNT].m_sock = sock;                    \
+          if (addr)                                                            \
+            Players[reti * MAX_ROOM_MEM_COUNT].m_addr = *(addr);               \
                                                                                \
-        if (name_member)                                                       \
-          strncpy(Players[reti * MAX_ROOM_MEM_COUNT].m_Name, name_member,      \
-                  MAX_PLAYER_NAME_COUNT);                                      \
-        else                                                                   \
-          Players[reti * MAX_ROOM_MEM_COUNT].m_Name[0] = 0;                    \
+          if (name_member)                                                     \
+            strncpy(Players[reti * MAX_ROOM_MEM_COUNT].m_Name, name_member,    \
+                    MAX_PLAYER_NAME_COUNT);                                    \
+          else                                                                 \
+            Players[reti * MAX_ROOM_MEM_COUNT].m_Name[0] = 0;                  \
+        }                                                                      \
       }                                                                        \
-    }} else if (Rooms[room].m_started) {                                        \
+    } else if (Rooms[room].m_started) {                                        \
       dbg_printf("This room[%d], is already started.\n", room);                \
       *(retroom) = -1;                                                         \
     } else {                                                                   \
@@ -168,7 +173,7 @@
         *(retroom) = -1;                                                       \
       } else {                                                                 \
         dbg_printf("The room %d is occupied by someone.\n", (room));           \
-        __IsRoomNFull(Rooms + (room), &reti, addr);                                  \
+        __IsRoomNFull(Rooms + (room), &reti, addr);                            \
         if (reti != MAX_ROOM_MEM_COUNT) {                                      \
           dbg_printf("The room %d is valid.\n", (room));                       \
           if (((pw) && !strncmp(Rooms[(room)].m_Pw, (pw),                      \

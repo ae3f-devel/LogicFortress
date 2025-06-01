@@ -11,5 +11,9 @@ set(MAX_ROOM_PW                 30)
 
 set(MAX_PLAYER_NAME_COUNT       32)
 set(DEBUG                       1)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Scripts/Core/Plugin)
+
+set(player_t    unsigned)
+set(room_t      unsigned)
 
 add_subdirectory(Bare)

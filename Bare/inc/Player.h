@@ -9,6 +9,7 @@
 
 #include <ae2f/Pack/Beg.h>
 #include "./Util.h"
+#include "./Player.auto.h"
 
 typedef struct Player {
     char        m_Name[MAX_PLAYER_NAME_COUNT];
@@ -25,8 +26,7 @@ typedef struct Player {
 
 #include <ae2f/Pack/End.h>
 
-typedef unsigned player_t;
-typedef player_t globplayer_t;
+
 
 #if SERVER
 ae2f_extern ae2f_SHAREDCALL Player    Players[(MAX_ROOM_PLAYER_COUNT + MAX_ROOM_SPECTATOR_COUNT) * MAX_ROOM_COUNT];

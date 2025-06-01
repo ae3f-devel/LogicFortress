@@ -88,6 +88,9 @@ crashlytics-build.properties
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
 
 Bare/submod/*
-Bare/*.auto.*
+*.auto.*
 build/
 .cache
+
+Assets/Scripts/Core/Plugin/*
+!*.hint.md
