@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.20)
 
 option(ae2f_IS_SHARED	"DLL EXPORT"	ON)
+
 
 set(MAX_ROOM_COUNT              20)
 set(MAX_ROOM_PLAYER_COUNT       6)
@@ -24,3 +25,4 @@ configure_file(
     ${PROJECT_SOURCE_DIR}/Bare/auto/cs/SockAddrSz.cs 
     ${PROJECT_SOURCE_DIR}/Assets/Scripts/Core/Net/SockAddrSz.auto.cs
     )
+    

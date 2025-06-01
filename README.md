@@ -1,7 +1,13 @@
 # Room
 - We will need cmake and builder to build this.
-
 - Multi
+
+# Requirements
+- cmake >= 3.20
+- c compiler
+- c++ compiler
+- make/ninja
+
 
 # Goal
 - Create Room

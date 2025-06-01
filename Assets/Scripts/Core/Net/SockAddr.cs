@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace Core.Net
 {
+    /** @brief Socket Address */
     public struct SockAddr
     {
         SockAddrSz sz;
