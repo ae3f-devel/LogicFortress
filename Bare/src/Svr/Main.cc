@@ -1,56 +1,24 @@
 #include <Sock.imp.h>
+#include "./SvrMain.h"
 
-ae2f_extern ae2f_SHAREDCALL
-struct _Svr {
-    ae2f_InetMkData mkdata;
-    sock_t sock;
-} Svr;
-
-ae2f_extern ae2f_SHAREDEXPORT
-_Svr Svr = {};
-
-#include <thread>
 #include <new>
 #include <cstdlib>
 
-#include <Room.auto.h>
-#include <Max.auto.h>
 
-ae2f_extern ae2f_SHAREDCALL
-union _SvrUnit {
-    struct _SvrUnitID {
-        union _SvrUnitIDHandle {
-            std::thread td; 
-            char a; 
-            inline ~_SvrUnitIDHandle() {} 
-            constexpr _SvrUnitIDHandle() : a(0) {}
-        } id;
-        int res;
-
-        constexpr _SvrUnitID() : res(0) {}
-        inline ~_SvrUnitID() {}
-    } ID;
-
-    struct _SvrUnitGame {
-        struct _SvrUnitID _;
-        room_t room;
-    } Game;
-
-    constexpr _SvrUnit() : ID{} {}
-    inline ~_SvrUnit() {}
-
-} SvrUnits[MAX_ROOM_COUNT + 1];
 
 ae2f_extern ae2f_SHAREDEXPORT
 _SvrUnit SvrUnits[MAX_ROOM_COUNT + 1] = {};
+
+ae2f_extern ae2f_SHAREDEXPORT
+_SvrUnitIDHandle SvrTds[MAX_ROOM_COUNT + 1] = {};
 
 
 ae2f_SHAREDCALL void SvrUnit(void*);
 ae2f_SHAREDCALL void SvrRes(void*);
 
+static unsigned SvrStarted = 0;
 
-ae2f_SHAREDEXPORT void SvrUnit(void*) {}
-ae2f_SHAREDEXPORT void SvrRes(void*) {}
+ae2f_extern ae2f_SHAREDCALL void SvrExit();
 
 /**
  * @brief 
@@ -60,7 +28,10 @@ ae2f_SHAREDEXPORT void SvrRes(void*) {}
 ae2f_extern ae2f_SHAREDEXPORT
 int SvrMain(unsigned short port)
 {
-	if (ae2f_InetMk(MAKEWORD(2, 2), &Svr.mkdata) != 0) {
+    if(SvrStarted) return 0;
+    else SvrStarted = 1;
+
+	if (ae2f_InetMk(MAKEWORD(2, 2), &Svr.m_mkdata) != 0) {
         return 1;
     }
 
@@ -83,13 +54,12 @@ int SvrMain(unsigned short port)
         return (1);
     }
 
-    Svr.sock = svrfd;
-
-    new (&SvrUnits->ID.id.td) std::thread(SvrRes, (void*)(SvrUnits));
+    SvrUnits->ID.fd = svrfd;
+    new (&SvrTds->td) std::thread(SvrRes, (void*)(SvrUnits));
 
     for(room_t i = 0; i < MAX_ROOM_COUNT; i++) {
         SvrUnits[i + 1].Game.room = i;
-        new (&SvrUnits[i + 1].ID.id.td) std::thread(SvrUnit, (void*)(SvrUnits + i + 1));
+        new (&SvrTds[i + 1].td) std::thread(SvrUnit, (void*)(SvrUnits + i + 1));
     }
 
     return 0;
@@ -97,11 +67,13 @@ int SvrMain(unsigned short port)
 
 ae2f_extern ae2f_SHAREDEXPORT
 void SvrExit() {
+    close(SvrUnits->ID.fd);
+    SvrUnits->ID.fd = INVALID_SOCKET;
+
     for(size_t i = sizeof(SvrUnits) / sizeof(SvrUnits[0]) - 1; i != -1; i--) {
-        SvrUnits[i].ID.id.td.join();
-        SvrUnits[i].ID.id.td.~thread();
+        SvrTds[i].td.join();
+        SvrTds[i].td.~thread();
     }
 
-    close(Svr.sock);
     ae2f_InetDel();
 }

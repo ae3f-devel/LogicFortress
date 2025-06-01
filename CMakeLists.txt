@@ -25,4 +25,9 @@ configure_file(
     ${PROJECT_SOURCE_DIR}/Bare/auto/cs/SockAddrSz.cs 
     ${PROJECT_SOURCE_DIR}/Assets/Scripts/Core/Net/SockAddrSz.auto.cs
     )
+
+configure_file(
+    ${PROJECT_SOURCE_DIR}/Bare/auto/cs/Room.cs 
+    ${PROJECT_SOURCE_DIR}/Assets/Scripts/Core/Room.auto.cs
+    )
     

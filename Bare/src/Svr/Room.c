@@ -12,18 +12,23 @@ ae2f_SHAREDEXPORT void RoomLobby(room_t room, room_t *retroom,
 }
 
 ae2f_SHAREDEXPORT void ResRoomLobby(sock_t sock, const sockaddr_t *addr,
-                                    __ReqRoomLobbyBuf *req,
-                                    uint8_t *flag_keep) {
-  if (flag_keep) {
-    if (*(flag_keep) && req && req->m_req == REQ_ROOMLOBBY && addr &&
+                                    __ReqRoomLobbyBuf *req) {
+    if (req && req->m_req == REQ_ROOMLOBBY && addr &&
         sock != INVALID_SOCKET) {
       room_t v_retroom = -1;
       __RoomLobby(req->m_room, &v_retroom, req->m_rname, req->m_rpwd, sock,
                   addr, req->m_plname);
       if (sizeof(room_t) == sendto(sock, (const void*)&v_retroom, sizeof(v_retroom), 0, addr,
                                    sizeof(sockaddr_internal_t))) {
-        *(flag_keep) = 0; /*succeed*/
       }
+    }  
+}
+
+ae2f_SHAREDCALL
+void ResRoomShow(sock_t clisock, const sockaddr_t* cliaddr, __ReqRoomShowBuf* req) {
+  if((req) && (cliaddr) && clisock != INVALID_SOCKET) {
+    if(req->pad + req->count <= MAX_ROOM_COUNT) {
+      sendto(clisock, Rooms + req->pad, sizeof(Room) * req->count, 0, cliaddr, sizeof(sockaddr_internal_t));
     }
   }
 }

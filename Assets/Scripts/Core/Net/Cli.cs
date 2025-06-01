@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using Unity.VisualScripting;
+using Core;
 
 namespace Core.Net
 {
@@ -97,6 +97,11 @@ namespace Core.Net
             );
         }
 
-        /** @todo: Make ReqRoomMatch */
+        [DllImport("liblibCli", CharSet = CharSet.Ansi)]
+        public unsafe static extern void ReqRoomShow(
+            int svrsock, in SockAddr svraddr
+            , uint roompad, uint roomcount, Room* retroom
+            , out uint retcount
+        );
     }
 }
