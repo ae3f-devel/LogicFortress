@@ -148,9 +148,9 @@
             Rooms[reti].m_Name[0] = 0;                                         \
                                                                                \
           if (pw)                                                              \
-            strncpy(Rooms[reti].m_Pw, pw, MAX_ROOM_PW);                        \
+            strncpy(RoomPrivates[reti].m_Pw, pw, MAX_ROOM_PW);                        \
           else                                                                 \
-            Rooms[reti].m_Pw[0] = 0;                                           \
+            RoomPrivates[reti].m_Pw[0] = 0;                                           \
                                                                                \
           Players[reti * MAX_ROOM_MEM_COUNT].m_sock = sock;                    \
           if (addr)                                                            \
@@ -178,9 +178,9 @@
         __IsRoomNFull(Rooms + (room), &reti, addr);                            \
         if (reti != MAX_ROOM_MEM_COUNT) {                                      \
           dbg_printf("The room %d is valid.\n", (room));                       \
-          if (((pw) && !strncmp(Rooms[(room)].m_Pw, (pw),                      \
+          if (((pw) && !strncmp(RoomPrivates[(room)].m_Pw, (pw),                      \
                                 MAX_ROOM_PW)) /* pw matches. */                \
-              || !Rooms[(room)].m_Pw[0] /*Pwd of room is null.*/) {            \
+              || !RoomPrivates[(room)].m_Pw[0] /*Pwd of room is null.*/) {            \
             dbg_puts("Password matches. You may come in.");                    \
             *(retroom) = (room);                                               \
             if (addr)                                                          \

@@ -17,13 +17,16 @@
  */
 typedef struct Room {
   char m_Name[MAX_ROOM_NAME_COUNT];
-  char m_Pw[MAX_ROOM_PW];
   bool m_started;
 
 #ifdef __cplusplus
-  constexpr Room() : m_Name{0, }, m_Pw{0, }, m_started(0) {}
+  constexpr Room() : m_Name{0, }, m_started(0) {}
 #endif
 } Room;
+
+typedef struct RoomPrivate {
+  char m_Pw[MAX_ROOM_PW];
+} RoomPrivate;
 
 #include "./Req.h"
 
@@ -44,6 +47,7 @@ typedef struct __ReqRoomLobbyBuf {
 
 #if SERVER
 ae2f_extern ae2f_SHAREDCALL Room Rooms[MAX_ROOM_COUNT];
+ae2f_extern ae2f_SHAREDCALL RoomPrivate RoomPrivates[MAX_ROOM_COUNT];
 ae2f_extern ae2f_SHAREDCALL void RoomLobby(room_t room, room_t *retroom,
                                            const char *roomname, const char *pw,
                                            sock_t clientsocket,
