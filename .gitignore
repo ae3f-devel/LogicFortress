@@ -92,5 +92,5 @@ Bare/submod/*
 build/
 .cache
 
-Assets/*
+Assets/Plugin/*
 !*.hint.md

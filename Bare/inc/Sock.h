@@ -2,6 +2,11 @@
 #define Sock_h
 
 #include <ae2f/Inet.h>
+
+#if _WIN32
+#include <ws2tcpip.h>
+#endif
+
 typedef ae2f_InetSock       sock_t;
 typedef struct sockaddr_in  sockaddr_internal_t;
 typedef struct sockaddr     sockaddr_t;    

@@ -9,7 +9,9 @@
 
 #define __GetPlayerIndex(roomid, playerid)                                     \
   ((((roomid)) * MAX_ROOM_PLAYER_COUNT) + (playerid))
-#define __GetRoomIndex(globplayerid) ((globplayerid) / MAX_ROOM_PLAYER_COUNT)
+  
+#define __GetRoomIndex(globplayerid) \
+  ((globplayerid) / MAX_ROOM_PLAYER_COUNT)
 
 /**
  * @details
@@ -50,7 +52,7 @@
         if (pw)                                                                \
           strncpy(v_req.m_rpwd, (pw), MAX_ROOM_PW);                            \
       }                                                                        \
-      v_bytes = sendto((svrsock), &v_req, sizeof(v_req), 0, (svraddr),         \
+      v_bytes = sendto((svrsock), (const void*)&v_req, sizeof(v_req), 0, (svraddr),         \
                        sizeof(sockaddr_internal_t));                           \
                                                                                \
       if (v_bytes != sizeof(v_req)) {                                          \
@@ -60,7 +62,7 @@
       else {                                                                   \
         sockaddr_internal_t v_from[1];                                         \
         socklen_t v_fromlen[1] = {sizeof(sockaddr_t)};                         \
-        if (recvfrom((svrsock), (retroom), sizeof(room_t), 0,                  \
+        if (recvfrom((svrsock), (void*)(retroom), sizeof(room_t), 0,                  \
                      ae2f_reinterpret_cast(sockaddr_t *, v_from),              \
                      v_fromlen) != sizeof(room_t)) {                           \
           (*(retroom) = -1);                                                   \
