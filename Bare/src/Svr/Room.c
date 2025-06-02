@@ -32,7 +32,7 @@ void ResRoomShow(sock_t clisock, const sockaddr_t* cliaddr, __ReqRoomShowBuf* re
     dbg_printf("pad %d + count %d = %d\n", req->pad, req->count, req->count + req->pad);
     if(req->pad + req->count <= MAX_ROOM_COUNT) {
       dbg_puts("Got. sending room informations.");
-      ssize_t a = sendto(clisock, Rooms + req->pad, sizeof(Room) * req->count, 0, cliaddr, sizeof(sockaddr_internal_t));
+      ssize_t a = sendto(clisock, ae2f_reinterpret_cast(const void*, Rooms + req->pad), sizeof(Room) * req->count, 0, cliaddr, sizeof(sockaddr_internal_t));
       dbg_printf("sendto: %d\n", a);
     }
   }

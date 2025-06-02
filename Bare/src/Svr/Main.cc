@@ -26,8 +26,11 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
   else
     SvrStarted = 1;
 
-  if (ae2f_InetMk(MAKEWORD(2, 2), &Svr.m_mkdata) != 0) {
-    return 1;
+  {
+    ae2f_InetMkData mkdata;
+    if (ae2f_InetMk(MAKEWORD(2, 2), &mkdata) != 0) {
+      return 1;
+    }
   }
 
   sock_t svrfd = 0;
