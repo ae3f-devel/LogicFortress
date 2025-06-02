@@ -1,8 +1,9 @@
 #include <Svr/Main.h> 
 #include <stdio.h>
 
+
 int main() {
-    int a = SvrMain(90000);
+    int a = SvrMain(8080);
 
     if(a) {
         printf("[SvrMain] error occured: %d\n", a);

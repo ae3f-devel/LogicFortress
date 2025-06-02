@@ -46,3 +46,6 @@ endif()
 
 add_executable(testLobby test/main.c)
 target_link_libraries(testLobby PUBLIC libSvrUDP)
+
+add_executable(testReqLobby test/client.c)
+target_link_libraries(testReqLobby PUBLIC libCli)

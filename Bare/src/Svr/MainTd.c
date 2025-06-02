@@ -27,7 +27,7 @@
       v_flags |= O_NONBLOCK;                                                   \
       if (fcntl(fd, F_SETFL, v_flags) == -1) {                                 \
         perror("fcntl F_SETFL");                                               \
-        *(res) - 1;                                                            \
+        *(res) = -1;                                                            \
       } else                                                                   \
         *(res) = 0;                                                            \
     }                                                                          \
@@ -73,7 +73,7 @@ void SvrRes(union _SvrUnit *a) {
         recvfrom(Svr.m_sock, (void *)&Svr.m_reqbuff, sizeof(Svr.m_reqbuff), 0,
                  Svr.m_addr.m_addr, &Svr.m_addrlen);
 
-    if (Svr.m_succeed < sizeof(req_t)) {
+    if (Svr.m_succeed < sizeof(req_t) || Svr.m_succeed > sizeof(Svr.m_reqbuff)) {
       if(errno == EWOULDBLOCK || errno == EAGAIN) {
         continue;
       } else if(a->ID.fd == INVALID_SOCKET) {
@@ -83,6 +83,9 @@ void SvrRes(union _SvrUnit *a) {
       continue;
     }
 
+    if(Svr.m_succeed >= sizeof(req_t)) {
+      dbg_printf("Connect from somewhere. Req: %d\n", Svr.m_reqbuff.m_req);
+    }
     switch (Svr.m_reqbuff.m_req) {
     case REQ_ROOMLOBBY:
       if(Svr.m_succeed != sizeof(Svr.m_reqbuff.m_ReqRoomLobby)) continue;;

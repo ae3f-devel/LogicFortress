@@ -9,9 +9,7 @@ namespace Test
     {
         public void Awake()
         {
-            int a;
-            /** TODO: IMPLEMENT THIS */
-            Svr svr = new Svr(8080, out a);
+            int a = 0;
             if (a == 0)
             {
                 _Room[] rooms = new _Room[5];

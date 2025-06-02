@@ -24,11 +24,16 @@ ae2f_SHAREDEXPORT void ResRoomLobby(sock_t sock, const sockaddr_t *addr,
     }  
 }
 
+#define dbg_prefix "[ResRoomShow] "
+
 ae2f_SHAREDCALL
 void ResRoomShow(sock_t clisock, const sockaddr_t* cliaddr, __ReqRoomShowBuf* req) {
   if((req) && (cliaddr) && clisock != INVALID_SOCKET) {
+    dbg_printf("pad %d + count %d = %d\n", req->pad, req->count, req->count + req->pad);
     if(req->pad + req->count <= MAX_ROOM_COUNT) {
-      sendto(clisock, Rooms + req->pad, sizeof(Room) * req->count, 0, cliaddr, sizeof(sockaddr_internal_t));
+      dbg_puts("Got. sending room informations.");
+      ssize_t a = sendto(clisock, Rooms + req->pad, sizeof(Room) * req->count, 0, cliaddr, sizeof(sockaddr_internal_t));
+      dbg_printf("sendto: %d\n", a);
     }
   }
 }
