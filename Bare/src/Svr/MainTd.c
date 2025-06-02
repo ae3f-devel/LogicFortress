@@ -7,11 +7,21 @@
 #define dbg_prefix "[SvrUnit]"
 
 #if _WIN32
+
+#define nonblock(sock, res)  \
+{ \
+    u_long mode = 1; \
+    if (ioctlsocket(sock, FIONBIO, &mode) != 0) { \
+        printf("ioctlsocket failed with error: %d\n", WSAGetLastError()); \
+        *(res) = -1; \
+    } \
+    *(res) = 0; \
+}
+
 #else
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
-#endif
 
 #define nonblock(fd, res)                                                      \
   if (res) {                                                                   \
@@ -32,6 +42,12 @@
         *(res) = 0;                                                            \
     }                                                                          \
   }
+
+#endif
+
+
+
+
 
 ae2f_extern ae2f_SHAREDEXPORT void SvrUnit(union _SvrUnit *a) {
   if (!a)
