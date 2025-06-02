@@ -6,8 +6,8 @@ namespace Core.Net
     public struct SockAddr
     {
         SockAddrSz sz;
-        
-        [DllImport("liblibCli", CharSet = CharSet.Ansi)]
+
+        [DllImport("libCli", CharSet = CharSet.Ansi)]
         public static extern void SockAddrMk(
             out SockAddr sock,
             [MarshalAs(UnmanagedType.LPStr)] string ip,

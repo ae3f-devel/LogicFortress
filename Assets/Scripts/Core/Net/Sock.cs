@@ -8,11 +8,11 @@ namespace Core.Net
     /// </summary>
     public class Sock
     {
-        [DllImport("liblibCli", CharSet = CharSet.Ansi)]
+        [DllImport("libCli", CharSet = CharSet.Ansi)]
         public static extern int SockOpen();
 
-        [DllImport("liblibCli", CharSet = CharSet.Ansi)]
-        public static extern void SockClose();
+        [DllImport("libCli", CharSet = CharSet.Ansi)]
+        public static extern void SockClose(int a);
 
         private int _fd;
         public int fd { get { return _fd; } }
@@ -20,12 +20,12 @@ namespace Core.Net
 
         public Sock()
         {
-
+            this._fd = SockOpen();
         }
 
         ~Sock()
         {
-
+            SockClose(this._fd);
         }
     }
 }

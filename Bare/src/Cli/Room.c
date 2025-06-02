@@ -49,6 +49,8 @@ void ReqRoomShow(
         
         if(!sockaddr_internal_check((const sockaddr_internal_t*)svraddr, v_svraddr._in)) {
             *(retcount) = 0;
+        } else if(*(retcount) > 0) {
+            *(retcount) /= sizeof(Room);
         }
     }
    }

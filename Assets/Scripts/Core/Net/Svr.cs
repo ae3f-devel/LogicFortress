@@ -8,10 +8,10 @@ namespace Core.Net
     /** @brief Client */
     public class Svr
     {
-        [DllImport("liblibSvr")]
+        [DllImport("libSvrUDP", CharSet = CharSet.Ansi)]
         public static extern int SvrMain(ushort port);
 
-        [DllImport("liblibSvr")]
+        [DllImport("libSvrUDP", CharSet = CharSet.Ansi)]
         public static extern int SvrExit();
 
         /// <summary>

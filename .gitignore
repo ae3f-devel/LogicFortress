@@ -91,6 +91,5 @@ Bare/submod/*
 *.auto.*
 build/
 .cache
-
-Assets/Plugin/*
 !*.hint.md
+Assets/Plugins/

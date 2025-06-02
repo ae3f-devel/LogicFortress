@@ -5,7 +5,7 @@ namespace Test
 {
     public class SOImport : MonoBehaviour
     {
-        [DllImport("liblibCli", CharSet = CharSet.Ansi)]
+        [DllImport("libCli", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void Test(out int a);
         public void Awake()
         {

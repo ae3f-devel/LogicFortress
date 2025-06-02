@@ -50,7 +50,7 @@ namespace Core.Net
         /// <param name="clientname">
         /// Character name after getting in room [will be displayed
         /// ]</param>
-        [DllImport("liblibCli", CharSet = CharSet.Ansi)]
+        [DllImport("libCli", CharSet = CharSet.Ansi)]
         public static extern void ReqRoomLobby(
             int svrsock, in SockAddr svraddr,
             uint room, out uint retroom,
@@ -97,10 +97,10 @@ namespace Core.Net
             );
         }
 
-        [DllImport("liblibCli", CharSet = CharSet.Ansi)]
+        [DllImport("libCli", CharSet = CharSet.Ansi)]
         public unsafe static extern void ReqRoomShow(
             int svrsock, in SockAddr svraddr
-            , uint roompad, uint roomcount, Room* retroom
+            , uint roompad, uint roomcount, _Room* retroom
             , out uint retcount
         );
     }
