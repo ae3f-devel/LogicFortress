@@ -1,3 +1,5 @@
+#define SERVER 1
+
 #include "./SvrMain.h"
 #include <Sock.imp.h>
 
@@ -65,12 +67,19 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
   return 0;
 }
 
+#include "./SvrMain.h"
+
 ae2f_extern ae2f_SHAREDEXPORT void SvrExit() {
   close(SvrUnits->ID.fd);
   
 
   for (size_t i = sizeof(SvrUnits) / sizeof(SvrUnits[0]) - 1; i != -1; i--) {
     SvrUnits[i].ID.fd = INVALID_SOCKET;
+    if(i) {
+      RoomFlags[i - 1] = 2;
+      __ae2f_WakeSingle(RoomFlags + i - 1);
+    }
+
     SvrTds[i].td.join();
     SvrTds[i].td.~thread();
 

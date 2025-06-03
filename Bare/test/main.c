@@ -1,9 +1,10 @@
 #include <Svr/Main.h> 
 #include <stdio.h>
+#include "port.auto.h"
 
 
 int main() {
-    int a = SvrMain(8080);
+    int a = SvrMain(TEST_PORT);
 
     if(a) {
         printf("[SvrMain] error occured: %d\n", a);

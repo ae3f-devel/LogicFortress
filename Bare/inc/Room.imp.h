@@ -124,84 +124,88 @@
                                                                                \
     if (!(retroom))                                                            \
       ;                                                                        \
-    if ((room) == -1) {                                                        \
-      globplayer_t v_globplayer_i;                                             \
-      __SetPlayerOffline(addr, &v_globplayer_i);                               \
-      if (v_globplayer_i != MAX_GLOBAL_PLAYER_COUNT) {                         \
-        dbg_puts("room was -1 and you are online.");                           \
-        dbg_printf("You are online here -> %d\n", v_globplayer_i);             \
-        dbg_puts("Now you are being disconnected.");                           \
-        *(retroom) = -1;                                                       \
-      } else {                                                                 \
-        /** Making new room... */                                              \
-        size_t reti;                                                           \
-        __FindRoomNOccupied((&reti));                                          \
-        if (reti == MAX_ROOM_COUNT) {                                          \
-          dbg_puts("No room is available.");                                   \
-          *(retroom) = -1;                                                     \
-        } else {                                                               \
-          dbg_printf("Room %d will be allocated.\n");                          \
-          *(retroom) = reti;                                                   \
-          if (name_room)                                                       \
-            strncpy(Rooms[reti].m_Name, name_room, MAX_ROOM_NAME_COUNT);       \
-          else                                                                 \
-            Rooms[reti].m_Name[0] = 0;                                         \
+    else { \
+        globplayer_t v_globplayer_i = 0;                                             \
+        __SetPlayerOffline(addr, &v_globplayer_i);                               \
+        if(v_globplayer_i != MAX_GLOBAL_PLAYER_COUNT) { \
+          dbg_puts("you are online.");                           \
+          dbg_printf("You are online here -> %d\n", v_globplayer_i);             \
+          dbg_puts("Now you are being disconnected.");                           \
+          *(retroom) = -1;                                                       \
+        } \
+        if ((room) == -1 && v_globplayer_i != MAX_GLOBAL_PLAYER_COUNT); \
+        else if((room) == -1) {                                                                 \
+          /** Making new room... */                                              \
+          size_t reti;                                                           \
+          __FindRoomNOccupied((&reti));                                          \
+          if (reti == MAX_ROOM_COUNT) {                                          \
+            dbg_puts("No room is available.");                                   \
+            *(retroom) = -1;                                                     \
+          } else {                                                               \
+            dbg_printf("Room %d will be allocated.\n");                          \
+            *(retroom) = reti;                                                   \
+            if (name_room)                                                       \
+              strncpy(Rooms[reti].m_Name, name_room, MAX_ROOM_NAME_COUNT);       \
+            else                                                                 \
+              Rooms[reti].m_Name[0] = 0;                                         \
+                                                                                \
+            if (pw)                                                              \
+              strncpy(RoomPrivates[reti].m_Pw, pw, MAX_ROOM_PW);                        \
+            else                                                                 \
+              RoomPrivates[reti].m_Pw[0] = 0;                                           \
+                                                                                \
+            Players[reti * MAX_ROOM_MEM_COUNT].m_sock = sock;                    \
+            if (addr)                                                            \
+              Players[reti * MAX_ROOM_MEM_COUNT].m_addr = *(addr);               \
+                                                                                \
+            if (name_member)                                                     \
+              strncpy(Players[reti * MAX_ROOM_MEM_COUNT].m_Name, name_member,    \
+                      MAX_PLAYER_NAME_COUNT);                                    \
+            else                                                                 \
+              Players[reti * MAX_ROOM_MEM_COUNT].m_Name[0] = 0;                  \
+          }                                                                      \
+        } else {                                                                       \
+          /** Connected to existing... */  \
+          if (Rooms[room].m_started) {                                        \
+            dbg_printf("This room[%d], is already started.\n", room);                \
+            *(retroom) = -1;                                                         \
+          } else {                                                                   \
+            size_t reti;                                                             \
+            __IsRoomNOccupied(Rooms + (room), &reti);                                \
                                                                                \
-          if (pw)                                                              \
-            strncpy(RoomPrivates[reti].m_Pw, pw, MAX_ROOM_PW);                        \
-          else                                                                 \
-            RoomPrivates[reti].m_Pw[0] = 0;                                           \
-                                                                               \
-          Players[reti * MAX_ROOM_MEM_COUNT].m_sock = sock;                    \
-          if (addr)                                                            \
-            Players[reti * MAX_ROOM_MEM_COUNT].m_addr = *(addr);               \
-                                                                               \
-          if (name_member)                                                     \
-            strncpy(Players[reti * MAX_ROOM_MEM_COUNT].m_Name, name_member,    \
-                    MAX_PLAYER_NAME_COUNT);                                    \
-          else                                                                 \
-            Players[reti * MAX_ROOM_MEM_COUNT].m_Name[0] = 0;                  \
-        }                                                                      \
-      }                                                                        \
-    } else if (Rooms[room].m_started) {                                        \
-      dbg_printf("This room[%d], is already started.\n", room);                \
-      *(retroom) = -1;                                                         \
-    } else {                                                                   \
-      size_t reti;                                                             \
-      __IsRoomNOccupied(Rooms + (room), &reti);                                \
-                                                                               \
-      if (reti == MAX_ROOM_MEM_COUNT) {                                        \
-        dbg_printf("Unexpected room number %d\n", (room));                     \
-        *(retroom) = -1;                                                       \
-      } else {                                                                 \
-        dbg_printf("The room %d is occupied by someone.\n", (room));           \
-        __IsRoomNFull(Rooms + (room), &reti, addr);                            \
-        if (reti != MAX_ROOM_MEM_COUNT) {                                      \
-          dbg_printf("The room %d is valid.\n", (room));                       \
-          if (((pw) && !strncmp(RoomPrivates[(room)].m_Pw, (pw),                      \
+            if (reti == MAX_ROOM_MEM_COUNT) {                                        \
+              dbg_printf("Unexpected room number %d\n", (room));                     \
+              *(retroom) = -1;                                                       \
+            } else {                                                                 \
+              dbg_printf("The room %d is occupied by someone.\n", (room));           \
+              __IsRoomNFull(Rooms + (room), &reti, addr);                            \
+              if (reti != MAX_ROOM_MEM_COUNT) {                                      \
+                dbg_printf("The room %d is valid.\n", (room));                       \
+                  if (((pw) && !strncmp(RoomPrivates[(room)].m_Pw, (pw),                      \
                                 MAX_ROOM_PW)) /* pw matches. */                \
-              || !RoomPrivates[(room)].m_Pw[0] /*Pwd of room is null.*/) {            \
-            dbg_puts("Password matches. You may come in.");                    \
-            *(retroom) = (room);                                               \
-            if (addr)                                                          \
-              Players[reti + (room) * MAX_ROOM_MEM_COUNT].m_addr = *(addr);    \
-            Players[reti + (room) * MAX_ROOM_MEM_COUNT].m_sock = (sock);       \
-            if (name_member)                                                   \
-              strncpy(Players[reti + (room) * MAX_ROOM_MEM_COUNT].m_Name,      \
+                  || !RoomPrivates[(room)].m_Pw[0] /*Pwd of room is null.*/) {            \
+                    dbg_puts("Password matches. You may come in.");                    \
+                    *(retroom) = (room);                                               \
+                    if (addr)                                                          \
+                      Players[reti + (room) * MAX_ROOM_MEM_COUNT].m_addr = *(addr);    \
+                    Players[reti + (room) * MAX_ROOM_MEM_COUNT].m_sock = (sock);       \
+                    if (name_member)                                                   \
+                      strncpy(Players[reti + (room) * MAX_ROOM_MEM_COUNT].m_Name,      \
                       (name_member), MAX_PLAYER_NAME_COUNT);                   \
-            else                                                               \
-              Players[reti + (room) * MAX_ROOM_MEM_COUNT].m_Name[0] = 0;       \
-                                                                               \
-          } else {                                                             \
-            dbg_puts("Password does not matches.");                            \
-            *(retroom) = -1;                                                   \
-          }                                                                    \
-        } else {                                                               \
-          dbg_printf("The room %d is full. \n", (room));                       \
-          *(retroom) = -1;                                                     \
-        }                                                                      \
-      }                                                                        \
-    }                                                                          \
+                    else                                                               \
+                      Players[reti + (room) * MAX_ROOM_MEM_COUNT].m_Name[0] = 0;       \
+                  } else {                                                             \
+                    dbg_puts("Password does not matches.");                            \
+                    *(retroom) = -1;                                                   \
+                  }                                                                    \
+                } else {                                                               \
+                  dbg_printf("The room %d is full. \n", (room));                       \
+                  *(retroom) = -1;                                                     \
+                }                                                                      \
+              }                                                                        \
+            }                                                                          \
+        } \
+      } \
     dbg_puts("Done gracully.");                                                \
   }
 

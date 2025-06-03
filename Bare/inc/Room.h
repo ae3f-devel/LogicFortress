@@ -11,6 +11,8 @@
 #include <time.h>
 #include "./Room.auto.h"
 
+#include "./WaitWake.h"
+
 #pragma pack(push, 1)
 
 /**
@@ -19,7 +21,7 @@
  */
 typedef struct Room {
   char m_Name[MAX_ROOM_NAME_COUNT];
-  char m_started;
+  int m_started;
   size_t m_member;
 
 #ifdef __cplusplus
@@ -29,10 +31,6 @@ typedef struct Room {
 
 #pragma pack(pop)
 
-typedef struct RoomPrivate {
-  char m_Pw[MAX_ROOM_PW];
-} RoomPrivate;
-
 #include "./Req.h"
 
 #include <ae2f/Pack/End.h>
@@ -41,6 +39,11 @@ typedef struct __ReqRoomLobbyBuf __ReqRoomLobbyBuf;
 typedef struct __ReqRoomShowBuf __ReqRoomShowBuf;
 
 #if SERVER
+
+typedef struct RoomPrivate {
+  char m_Pw[MAX_ROOM_PW];
+} RoomPrivate;
+
 ae2f_extern ae2f_SHAREDCALL Room Rooms[MAX_ROOM_COUNT];
 ae2f_extern ae2f_SHAREDCALL RoomPrivate RoomPrivates[MAX_ROOM_COUNT];
 ae2f_extern ae2f_SHAREDCALL void RoomLobby(room_t room, room_t *retroom,

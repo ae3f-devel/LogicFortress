@@ -2,9 +2,7 @@
 #include "./SvrMain.h"
 #include <Dbg.h>
 #include <Room.h>
-
-#undef dbg_prefix
-#define dbg_prefix "[SvrUnit]"
+#include <Req.h>
 
 #if _WIN32
 
@@ -47,7 +45,8 @@
 
 
 
-
+#undef dbg_prefix
+#define dbg_prefix "[SvrUnit] "
 
 ae2f_extern ae2f_SHAREDEXPORT void SvrUnit(union _SvrUnit *a) {
   if (!a)
@@ -57,17 +56,21 @@ ae2f_extern ae2f_SHAREDEXPORT void SvrUnit(union _SvrUnit *a) {
     return;
 
   dbg_printf("thread %p has started\n", a - SvrUnits);
+  Rooms[a->Game.room].m_started = 0;
+  RoomFlags[a->Game.room] = 0;
 
   while (a->ID.fd != INVALID_SOCKET) {
-    if (!Rooms[a->Game.room].m_started)
-      ;
+    dbg_puts("Waiting...");
+    __ae2f_Wait(RoomFlags + a->Game.room, 0);
+    dbg_puts("Waiting is over");
   }
 
+  __QUIT:
   dbg_printf("thread %p is over\n", a - SvrUnits);
 }
 
 #undef dbg_prefix
-#define dbg_prefix "[SvrRes]"
+#define dbg_prefix "[SvrRes] "
 
 ae2f_extern ae2f_SHAREDEXPORT 
 void SvrRes(union _SvrUnit *a) {
@@ -81,7 +84,7 @@ void SvrRes(union _SvrUnit *a) {
     nonblock(a->ID.fd, &res);
   }
 
-  _Svr Svr;
+  _Svr Svr = {0, };
   Svr.m_sock = a->ID.fd;
 
   while (a->ID.fd != INVALID_SOCKET) {

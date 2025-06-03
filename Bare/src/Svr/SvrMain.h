@@ -1,3 +1,6 @@
+#ifndef SvrMain_h
+#define SvrMain_h
+
 #include <ae2f/Call.h>
 #include <ae2f/Cast.h>
 #include <Max.auto.h>
@@ -45,3 +48,8 @@ typedef struct _Svr {
     socklen_t m_addrlen;
     ssize_t m_succeed;
 } _Svr;
+
+
+ae2f_extern ae2f_SHAREDEXPORT ae2f_addrel_t RoomFlags[MAX_ROOM_COUNT];
+
+#endif

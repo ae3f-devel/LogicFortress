@@ -9,6 +9,8 @@ configure_file(${PROJECT_SOURCE_DIR}/auto/Dbg.h ${PROJECT_SOURCE_DIR}/inc/Dbg.au
 configure_file(${PROJECT_SOURCE_DIR}/auto/Player.h ${PROJECT_SOURCE_DIR}/inc/Player.auto.h)
 configure_file(${PROJECT_SOURCE_DIR}/auto/Room.h ${PROJECT_SOURCE_DIR}/inc/Room.auto.h)
 
+configure_file(${PROJECT_SOURCE_DIR}/auto/test/port.h ${PROJECT_SOURCE_DIR}/test/port.auto.h)
+
 file(GLOB incCore-src ${PROJECT_SOURCE_DIR}/inc/*)
 file(GLOB incSvr-src ${PROJECT_SOURCE_DIR}/inc/Svr/*)
 file(GLOB incCli-src ${PROJECT_SOURCE_DIR}/inc/Cli/*)
@@ -47,5 +49,9 @@ endif()
 add_executable(testLobby test/main.c)
 target_link_libraries(testLobby PUBLIC libSvrUDP)
 
-add_executable(testReqLobby test/client.c)
-target_link_libraries(testReqLobby PUBLIC libCli)
+if(NOT WIN32)
+    add_executable(testWaitLinux test/TestWaitLinux.c)
+    target_link_libraries(testWaitLinux PUBLIC incCore)
+endif()
+
+ae2f_CoreTestTent(libCli ${PROJECT_SOURCE_DIR}/test/units)
