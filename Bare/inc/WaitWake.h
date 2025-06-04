@@ -10,7 +10,7 @@
  * @brief 
  * Address element type.
  */
-#define ae2f_addrel_t volatile int
+#define ae2f_addrel_t volatile LONG
 
 /**
  * @def __ae2f_win_wait
@@ -20,14 +20,14 @@
  * Wait `uaddr` if its value equals to `v`.
  */
 #define __ae2f_win_wait(uaddr, v) \
-    { int vv = v; WaitOnAddress(uaddr, &vv, sizeof(int), INFINITE); }
+    { int vv = v; WaitOnAddress((uaddr), &vv, sizeof(int), INFINITE); }
 
 /**
  * @def __ae2f_win_wakesingle
  * @param uaddr     {ae2f_addrel_t*}
  */
 #define __ae2f_win_wakesingle(uaddr) \
-    WakeByAddressSingle(uaddr)
+    WakeByAddressSingle((PVOID)(uaddr))
 
 #define __ae2f_WakeSingle   __ae2f_win_wakesingle
 #define __ae2f_Wait         __ae2f_win_wait

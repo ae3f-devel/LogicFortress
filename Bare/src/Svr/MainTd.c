@@ -10,11 +10,15 @@
 { \
     u_long mode = 1; \
     if (ioctlsocket(sock, FIONBIO, &mode) != 0) { \
-        printf("ioctlsocket failed with error: %d\n", WSAGetLastError()); \
+        dbg_printf("ioctlsocket failed with error: %d\n", WSAGetLastError()); \
         *(res) = -1; \
     } \
     *(res) = 0; \
 }
+
+#define errno WSAGetLastError()
+#define EWOULDBLOCK   WSAEWOULDBLOCK
+#define EAGAIN        WSAEWOULDBLOCK
 
 #else
 #include <errno.h>
@@ -88,14 +92,16 @@ void SvrRes(union _SvrUnit *a) {
   Svr.m_sock = a->ID.fd;
 
   while (a->ID.fd != INVALID_SOCKET) {
-    Svr.m_succeed =
-        recvfrom(Svr.m_sock, (void *)&Svr.m_reqbuff, sizeof(Svr.m_reqbuff), 0,
-                 Svr.m_addr.m_addr, &Svr.m_addrlen);
-
     if(!RoomFlags[MAX_ROOM_COUNT]) {
       RoomFlags[MAX_ROOM_COUNT] = 1;
       __ae2f_WakeSingle(&RoomFlags[MAX_ROOM_COUNT]);
     }
+
+    Svr.m_addrlen = sizeof(Svr.m_addr.m_in);
+
+    Svr.m_succeed =
+        recvfrom(Svr.m_sock, (void *)&Svr.m_reqbuff, sizeof(Svr.m_reqbuff), 0,
+                 Svr.m_addr.m_addr, &Svr.m_addrlen);
 
     if (Svr.m_succeed < sizeof(req_t) || Svr.m_succeed > sizeof(Svr.m_reqbuff)) {
       if(errno == EWOULDBLOCK || errno == EAGAIN) {

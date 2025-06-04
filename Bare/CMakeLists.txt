@@ -43,7 +43,7 @@ target_link_libraries(libHost PUBLIC incCli PUBLIC libSvrUDP)
 if(WIN32)
     target_link_libraries(libCli PUBLIC ws2_32)
     target_link_libraries(libSvrUDP PUBLIC ws2_32)
-    target_link_libraries(libHost PUBLIC ws2_32)
+    target_link_libraries(libSvrUDP PUBLIC synchronization)
 endif()
 
 add_executable(testLobby test/main.c)

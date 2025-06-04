@@ -82,7 +82,7 @@ namespace Core.Net
         }
 
         public static void ReqRoomJoin(
-            int svrsock, in SockAddr svraddr, uint room, out uint retroom,
+            Sock svrsock, in SockAddr svraddr, uint room, out uint retroom,
             [MarshalAs(UnmanagedType.LPStr)] string pw,
             [MarshalAs(UnmanagedType.LPStr)] string clientname
         )
@@ -93,7 +93,7 @@ namespace Core.Net
         }
 
         public static void ReqRoomNewMatch(
-            int svrsock, in SockAddr svraddr, out uint retroom,
+            Sock svrsock, in SockAddr svraddr, out uint retroom,
             [MarshalAs(UnmanagedType.LPStr)] string clientname
             )
         {
@@ -104,7 +104,7 @@ namespace Core.Net
         }
 
         public static void ReqRoomNewCustom(
-            int svrsock, in SockAddr svraddr, out uint retroom,
+            Sock svrsock, in SockAddr svraddr, out uint retroom,
             [MarshalAs(UnmanagedType.LPStr)] string name,
             [MarshalAs(UnmanagedType.LPStr)] string pw,
             [MarshalAs(UnmanagedType.LPStr)] string clientname
@@ -118,6 +118,7 @@ namespace Core.Net
                 out retroom, name, pw, clientname
             );
         }
+
 
         [DllImport("libCli", CharSet = CharSet.Ansi)]
         public unsafe static extern void ReqRoomShow(

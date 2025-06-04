@@ -27,7 +27,7 @@ set(room_t      unsigned)
 set(sockaddrsz  16)
 
 # TEST PORT VAL
-set(TEST_PORT           9000)
+set(TEST_PORT           6767)
 
 add_subdirectory(Bare)
 
