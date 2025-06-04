@@ -4,9 +4,15 @@ using System.Runtime.InteropServices;
 namespace Core.Net
 {
 
-    /** @brief Client */
-    public class Cli
+    /// <summary>
+    /// Ancient library call from `Bare`.
+    /// This has no ability to 
+    /// </summary>
+    internal static class Cli
     {
+        public const uint INVALID = uint.MaxValue;
+        public const uint OFFLINE = uint.MaxValue;
+        public const uint UNSPECIFIED = uint.MaxValue;
 
         /// <summary>
         /// Request a server either to... <br/>
@@ -28,8 +34,8 @@ namespace Core.Net
         /// When you are currently in a room and you pass -1 here, you will be offline. 
         /// </param>
         /// 
-        /// <param name="retroom">
-        /// [room_t] <br/>
+        /// <param name="retglobplayer">
+        /// [globplayer_t] <br/>
         /// Result room number. <br/>
         /// This will be returned room number that you are currently in online state. <br/>
         /// 
@@ -52,78 +58,35 @@ namespace Core.Net
         /// Character name after getting in room will be displayed
         /// ]</param>
         [DllImport("libCli", CharSet = CharSet.Ansi)]
-        public static extern void ReqRoomLobby(
+        internal static extern void ReqRoomLobby(
             int svrsock, in SockAddr svraddr,
-            uint room, out uint retroom,
+            uint room, out uint retglobplayer,
             [MarshalAs(UnmanagedType.LPStr)] string name,
             [MarshalAs(UnmanagedType.LPStr)] string pw,
             [MarshalAs(UnmanagedType.LPStr)] string clientname
         );
 
         /// <summary>
-        /// 
+        /// Requests server a shared room information.
         /// </summary>
-        /// <param name="svr"></param>
+        /// <param name="svrsock"></param>
         /// <param name="svraddr"></param>
-        /// <param name="room"></param>
-        /// <param name="retroom"></param>
-        /// <param name="name"></param>
-        /// <param name="pw"></param>
-        /// <param name="clientname"></param>
-        public static void ReqRoomLobby(
-            Sock svr, in SockAddr svraddr,
-            uint room, out uint retroom,
-            [MarshalAs(UnmanagedType.LPStr)] string name,
-            [MarshalAs(UnmanagedType.LPStr)] string pw,
-            [MarshalAs(UnmanagedType.LPStr)] string clientname
-        )
-        {
-            ReqRoomLobby(svr.fd, svraddr, room, out retroom, name, pw, clientname);
-        }
-
-        public static void ReqRoomJoin(
-            Sock svrsock, in SockAddr svraddr, uint room, out uint retroom,
-            [MarshalAs(UnmanagedType.LPStr)] string pw,
-            [MarshalAs(UnmanagedType.LPStr)] string clientname
-        )
-        {
-            ReqRoomLobby(
-                svrsock, svraddr, room,
-                out retroom, null, pw, clientname);
-        }
-
-        public static void ReqRoomNewMatch(
-            Sock svrsock, in SockAddr svraddr, out uint retroom,
-            [MarshalAs(UnmanagedType.LPStr)] string clientname
-            )
-        {
-            ReqRoomLobby(
-                svrsock, svraddr, uint.MaxValue,
-                out retroom, null, null, clientname
-            );
-        }
-
-        public static void ReqRoomNewCustom(
-            Sock svrsock, in SockAddr svraddr, out uint retroom,
-            [MarshalAs(UnmanagedType.LPStr)] string name,
-            [MarshalAs(UnmanagedType.LPStr)] string pw,
-            [MarshalAs(UnmanagedType.LPStr)] string clientname
-        )
-        {
-            if (name == null)
-                throw new Exception("[ReqRoomNewCustom] name cannot be null.");
-
-            ReqRoomLobby(
-                svrsock, svraddr, uint.MaxValue,
-                out retroom, name, pw, clientname
-            );
-        }
-
-
+        /// <param name="roompad">
+        /// Index of room to start.
+        /// </param>
+        /// <param name="roomcount">
+        /// Count of room for request
+        /// </param>
+        /// <param name="retroom">
+        /// A pointer where rooms be store.
+        /// </param>
+        /// <param name="retcount">
+        /// Actual count of rooms successfully fetched.
+        /// </param>
         [DllImport("libCli", CharSet = CharSet.Ansi)]
-        public unsafe static extern void ReqRoomShow(
+        internal unsafe static extern void ReqRoomShow(
             int svrsock, in SockAddr svraddr
-            , uint roompad, uint roomcount, _Room* retroom
+            , uint roompad, uint roomcount, Room* retroom
             , out uint retcount
         );
     }

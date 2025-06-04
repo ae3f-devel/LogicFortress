@@ -4,13 +4,13 @@
 #define dbg_prefix "[ReqRoomLobby] "
 
 ae2f_SHAREDEXPORT void ReqRoomLobby(sock_t svrsock, const sockaddr_t *svraddr,
-                                    room_t room, room_t *retroom,
+                                    room_t room, globplayer_t* retgplidx,
                                     const char *name, const char *pw,
                                     const char *clientname) {
   dbg_puts("Starting.");
   assertmsg((svrsock == -1) == SERVER);
   assertmsg(!svraddr == SERVER); /*?*/
-  __ReqRoomLobby(svrsock, svraddr, room, retroom, name, pw, clientname);
+  __ReqRoomLobby(svrsock, svraddr, room, retgplidx, name, pw, clientname);
   dbg_puts("done gracully.");
 }
 

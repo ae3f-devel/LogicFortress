@@ -22,8 +22,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Plugins/${
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Plugins/${CMAKE_SYSTEM_PROCESSOR})
 
 # TYPES
-set(player_t    unsigned)
-set(room_t      unsigned)
+set(player_t        unsigned)
+set(globplayer_t    unsigned)
+set(room_t          unsigned)
+
+set(player_cs_t        uint)
+set(globplayer_cs_t    uint)
+set(room_cs_t          uint)
+
 set(sockaddrsz  16)
 
 # TEST PORT VAL
@@ -39,6 +45,11 @@ configure_file(
 configure_file(
     ${PROJECT_SOURCE_DIR}/Bare/auto/cs/Room.cs 
     ${PROJECT_SOURCE_DIR}/Assets/Scripts/Core/Room.auto.cs
+    )
+
+configure_file(
+    ${PROJECT_SOURCE_DIR}/Bare/auto/cs/Player.cs 
+    ${PROJECT_SOURCE_DIR}/Assets/Scripts/Core/Player.auto.cs
     )
 
 configure_file(

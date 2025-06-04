@@ -22,7 +22,7 @@ ae2f_extern ae2f_SHAREDCALL void SvrExit();
  * @param port
  * @returns 0 when succeed.
  */
-ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
+ae2f_extern ae2f_SHAREDEXPORT int SvrMain(ushort port) {
   if (SvrStarted)
     return 0;
   else
