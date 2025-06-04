@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Test
 {
-    public class SOImport : MonoBehaviour
+    internal class SOImport : MonoBehaviour
     {
         [DllImport("libCli", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void Test(out int a);

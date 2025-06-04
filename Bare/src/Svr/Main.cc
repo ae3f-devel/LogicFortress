@@ -64,6 +64,10 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
     new (&SvrTds[i + 1].td) std::thread(SvrUnit, (void *)(SvrUnits + i + 1));
   }
 
+  /** Waiting for thread be actually started. */
+  RoomFlags[MAX_ROOM_COUNT] = 0;
+  __ae2f_Wait(&RoomFlags[MAX_ROOM_COUNT], 0);
+
   return 0;
 }
 
@@ -76,8 +80,8 @@ ae2f_extern ae2f_SHAREDEXPORT void SvrExit() {
   for (size_t i = sizeof(SvrUnits) / sizeof(SvrUnits[0]) - 1; i != -1; i--) {
     SvrUnits[i].ID.fd = INVALID_SOCKET;
     if(i) {
-      RoomFlags[i - 1] = 2;
-      __ae2f_WakeSingle(RoomFlags + i - 1);
+      RoomFlags[i - 1] = 2; /* Changing roomflags to stop waiting */
+      __ae2f_WakeSingle(RoomFlags + i - 1); /* notify the memory */
     }
 
     SvrTds[i].td.join();

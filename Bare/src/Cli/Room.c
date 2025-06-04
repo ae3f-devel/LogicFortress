@@ -9,7 +9,7 @@ ae2f_SHAREDEXPORT void ReqRoomLobby(sock_t svrsock, const sockaddr_t *svraddr,
                                     const char *clientname) {
   dbg_puts("Starting.");
   assertmsg((svrsock == -1) == SERVER);
-  assertmsg(!svraddr == SERVER);
+  assertmsg(!svraddr == SERVER); /*?*/
   __ReqRoomLobby(svrsock, svraddr, room, retroom, name, pw, clientname);
   dbg_puts("done gracully.");
 }

@@ -40,3 +40,8 @@ configure_file(
     ${PROJECT_SOURCE_DIR}/Bare/auto/cs/Room.cs 
     ${PROJECT_SOURCE_DIR}/Assets/Scripts/Core/Room.auto.cs
     )
+
+configure_file(
+    ${PROJECT_SOURCE_DIR}/Bare/auto/cs/TestPort.cs 
+    ${PROJECT_SOURCE_DIR}/Assets/Scripts/Test/Port.auto.cs
+    )

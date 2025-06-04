@@ -92,6 +92,11 @@ void SvrRes(union _SvrUnit *a) {
         recvfrom(Svr.m_sock, (void *)&Svr.m_reqbuff, sizeof(Svr.m_reqbuff), 0,
                  Svr.m_addr.m_addr, &Svr.m_addrlen);
 
+    if(!RoomFlags[MAX_ROOM_COUNT]) {
+      RoomFlags[MAX_ROOM_COUNT] = 1;
+      __ae2f_WakeSingle(&RoomFlags[MAX_ROOM_COUNT]);
+    }
+
     if (Svr.m_succeed < sizeof(req_t) || Svr.m_succeed > sizeof(Svr.m_reqbuff)) {
       if(errno == EWOULDBLOCK || errno == EAGAIN) {
         continue;

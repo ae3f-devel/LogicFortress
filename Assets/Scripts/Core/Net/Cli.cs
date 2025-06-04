@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using Core;
 
 namespace Core.Net
 {
+
     /** @brief Client */
     public class Cli
     {
@@ -44,11 +44,12 @@ namespace Core.Net
         /// <param name="pw">
         /// [Optional] <br/>
         /// If you are making a new room, this will be new password  <br/>
-        /// If you are connecting to existing ones, this will be 
+        /// If you are connecting to existing ones, this will be password attempt. <br/>
+        /// This could be null, and equals to "".
         /// 
         /// </param>
         /// <param name="clientname">
-        /// Character name after getting in room [will be displayed
+        /// Character name after getting in room will be displayed
         /// ]</param>
         [DllImport("libCli", CharSet = CharSet.Ansi)]
         public static extern void ReqRoomLobby(
@@ -58,6 +59,27 @@ namespace Core.Net
             [MarshalAs(UnmanagedType.LPStr)] string pw,
             [MarshalAs(UnmanagedType.LPStr)] string clientname
         );
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="svr"></param>
+        /// <param name="svraddr"></param>
+        /// <param name="room"></param>
+        /// <param name="retroom"></param>
+        /// <param name="name"></param>
+        /// <param name="pw"></param>
+        /// <param name="clientname"></param>
+        public static void ReqRoomLobby(
+            Sock svr, in SockAddr svraddr,
+            uint room, out uint retroom,
+            [MarshalAs(UnmanagedType.LPStr)] string name,
+            [MarshalAs(UnmanagedType.LPStr)] string pw,
+            [MarshalAs(UnmanagedType.LPStr)] string clientname
+        )
+        {
+            ReqRoomLobby(svr.fd, svraddr, room, out retroom, name, pw, clientname);
+        }
 
         public static void ReqRoomJoin(
             int svrsock, in SockAddr svraddr, uint room, out uint retroom,

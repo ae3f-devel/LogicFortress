@@ -50,6 +50,6 @@ typedef struct _Svr {
 } _Svr;
 
 
-ae2f_extern ae2f_SHAREDEXPORT ae2f_addrel_t RoomFlags[MAX_ROOM_COUNT];
+ae2f_extern ae2f_SHAREDEXPORT ae2f_addrel_t RoomFlags[MAX_ROOM_COUNT + 1];
 
 #endif

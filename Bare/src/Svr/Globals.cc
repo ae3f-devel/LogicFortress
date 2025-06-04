@@ -12,4 +12,4 @@ ae2f_extern ae2f_SHAREDEXPORT RoomPrivate RoomPrivates[MAX_ROOM_COUNT] = {
 };
 
 /** @brief Alignment matters. VERY MUCH. */
-ae2f_extern ae2f_SHAREDEXPORT ae2f_addrel_t RoomFlags[MAX_ROOM_COUNT] = {0, };
+ae2f_extern ae2f_SHAREDEXPORT ae2f_addrel_t RoomFlags[MAX_ROOM_COUNT + 1] = {0, };
