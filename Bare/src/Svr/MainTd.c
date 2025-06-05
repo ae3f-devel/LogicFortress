@@ -53,8 +53,7 @@
 #define dbg_prefix "[SvrUnit] "
 
 ae2f_extern ae2f_SHAREDEXPORT void SvrUnit(union _SvrUnit *a) {
-  if (!a)
-    return;
+  assert(a);
 
   if (a->ID.fd == INVALID_SOCKET)
     return;
@@ -62,10 +61,6 @@ ae2f_extern ae2f_SHAREDEXPORT void SvrUnit(union _SvrUnit *a) {
   dbg_printf("thread %p has started\n", a - SvrUnits);
   Rooms[a->Game.room].m_started = 0;
   RoomFlags[a->Game.room] = 0;
-
-  for(player_t i = 0; i < MAX_ROOM_MEM_COUNT; i++) {
-    Players[a->Game.room * MAX_ROOM_MEM_COUNT + i].m_sock = -1;
-  }
 
   while (a->ID.fd != INVALID_SOCKET) {
     dbg_puts("Waiting...");
