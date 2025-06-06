@@ -1,4 +1,5 @@
 include(_.cmake)
+ae2f_CoreLibFetch(ae2f Core main)
 ae2f_CoreLibFetch(ae2f Inet main)
 ae2f_CoreLibFetch(ae2f Ruler main)
 

@@ -23,11 +23,7 @@
 typedef struct Room {
   char m_Name[MAX_ROOM_NAME_COUNT];
   int m_started;
-  globplayer_t m_member;
-
-#ifdef __cplusplus
-  constexpr Room() : m_Name{0, }, m_started(0), m_member{0} {}
-#endif
+  player_t m_member;
 } Room;
 
 #pragma pack(pop)
@@ -41,33 +37,28 @@ typedef struct __ReqRoomShowBuf __ReqRoomShowBuf;
 
 #if SERVER
 
-typedef struct RoomPrivate {
-  char m_Pw[MAX_ROOM_PW];
-} RoomPrivate;
 
-ae2f_extern ae2f_SHAREDCALL Room Rooms[MAX_ROOM_COUNT];
-ae2f_extern ae2f_SHAREDCALL RoomPrivate RoomPrivates[MAX_ROOM_COUNT];
 ae2f_extern ae2f_SHAREDCALL void RoomLobby(room_t room, globplayer_t* retgplidx,
                                            const char *roomname, const char *pw,
                                            sock_t clientsocket,
-                                           const sockaddr_t *clientaddr,
+                                           const uSockAddr *clientaddr,
                                            const char *clientname);
 
 
 ae2f_extern ae2f_SHAREDCALL void ResRoomLobby(sock_t clientsocket,
-                                           const sockaddr_t *clientaddr, __ReqRoomLobbyBuf* req);
+                                           const uSockAddr *clientaddr, __ReqRoomLobbyBuf* req);
 
-ae2f_extern ae2f_SHAREDCALL void ResRoomShow(sock_t clisock, const sockaddr_t* cliaddr, __ReqRoomShowBuf* req);
+ae2f_extern ae2f_SHAREDCALL void ResRoomShow(sock_t clisock, const uSockAddr* cliaddr, __ReqRoomShowBuf* req);
 #else
 #endif
 
 ae2f_extern ae2f_SHAREDCALL void ReqRoomLobby(sock_t svrsock,
-                                              const sockaddr_t *svraddr,
+                                              const uSockAddr *svraddr,
                                               room_t room, room_t *retroom,
                                               const char *roomname, const char *pw, const char* playername);
 
 ae2f_extern ae2f_SHAREDCALL void ReqRoomShow(
-    sock_t svrsock, const sockaddr_t* svraddr
+    sock_t svrsock, const uSockAddr* svraddr
     , room_t roompad, room_t roomcount, Room* retroom, room_t* retcount
 );
 
@@ -90,15 +81,5 @@ struct __ReqRoomShowBuf {
 };
 
 #pragma pack(pop)
-
-#if 0
-
-ae2f_extern ae2f_SHAREDCALL
-globplayer_t GetPlayerIdx(room_t, player_t);
-
-ae2f_extern ae2f_SHAREDCALL
-room_t       GetRoomIdx(globplayer_t);
-
-#endif
 
 #endif

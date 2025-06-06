@@ -1,5 +1,7 @@
 #define SERVER 1
 #include "./SvrMain.h"
+#include "./RoomPrivate.h"
+
 #include <Dbg.h>
 #include <Room.h>
 #include <Req.h>
@@ -91,16 +93,16 @@ void SvrRes(union _SvrUnit *a) {
   Svr.m_sock = a->ID.fd;
 
   while (a->ID.fd != INVALID_SOCKET) {
+    Svr.m_addrlen = SockAddrLen;
+
+    Svr.m_succeed =
+        recvfrom(Svr.m_sock, (void *)&Svr.m_reqbuff, sizeof(Svr.m_reqbuff), 0,
+                 &Svr.m_addr->m_addr, &Svr.m_addrlen);
+
     if(!RoomFlags[MAX_ROOM_COUNT]) {
       RoomFlags[MAX_ROOM_COUNT] = 1;
       __ae2f_WakeSingle(&RoomFlags[MAX_ROOM_COUNT]);
     }
-
-    Svr.m_addrlen = sizeof(Svr.m_addr.m_in);
-
-    Svr.m_succeed =
-        recvfrom(Svr.m_sock, (void *)&Svr.m_reqbuff, sizeof(Svr.m_reqbuff), 0,
-                 Svr.m_addr.m_addr, &Svr.m_addrlen);
 
     if (Svr.m_succeed < sizeof(req_t) || Svr.m_succeed > sizeof(Svr.m_reqbuff)) {
       if(errno == EWOULDBLOCK || errno == EAGAIN) {
@@ -108,7 +110,6 @@ void SvrRes(union _SvrUnit *a) {
       } else if(a->ID.fd == INVALID_SOCKET) {
         break;
       }
-
       continue;
     }
 
@@ -118,12 +119,12 @@ void SvrRes(union _SvrUnit *a) {
     switch (Svr.m_reqbuff.m_req) {
     case REQ_ROOMLOBBY:
       if(Svr.m_succeed != sizeof(Svr.m_reqbuff.m_ReqRoomLobby)) continue;;
-      ResRoomLobby(Svr.m_sock, Svr.m_addr.m_addr,
+      ResRoomLobby(Svr.m_sock, Svr.m_addr,
                    &Svr.m_reqbuff.m_ReqRoomLobby);
       break;
     case REQ_ROOMSHOW:
       if(Svr.m_succeed != sizeof(Svr.m_reqbuff.m_ReqRoomShow)) continue;;
-      ResRoomShow(Svr.m_sock, Svr.m_addr.m_addr, &Svr.m_reqbuff.m_ReqRoomShow);
+      ResRoomShow(Svr.m_sock, Svr.m_addr, &Svr.m_reqbuff.m_ReqRoomShow);
       break;
     }
   }

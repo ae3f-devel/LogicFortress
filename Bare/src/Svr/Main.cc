@@ -6,8 +6,13 @@
 #include <cstdlib>
 #include <new>
 
-ae2f_extern ae2f_SHAREDEXPORT _SvrUnit SvrUnits[MAX_ROOM_COUNT + 1] = {};
+#include <ae2f/Atom.h>
+#include "./RoomPrivate.h"
 
+#include "./PlConn.h"
+#include <Patternise.h>
+
+ae2f_extern ae2f_SHAREDEXPORT _SvrUnit SvrUnits[MAX_ROOM_COUNT + 1] = {};
 ae2f_extern ae2f_SHAREDEXPORT _SvrUnitIDHandle SvrTds[MAX_ROOM_COUNT + 1] = {};
 
 ae2f_extern ae2f_SHAREDCALL void SvrUnit(void *);
@@ -35,6 +40,10 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
     }
   }
 
+  for(globplayer_t i = 0; i < MAX_GLOBAL_PLAYER_COUNT; i++) {
+    PlConns[i].m_sock = INVALID_SOCKET;
+  }
+
   sock_t svrfd = 0;
   union {
     sockaddr_t addr;
@@ -46,7 +55,7 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
     close(svrfd);
     return 1;
   }
-
+  
   __SockAddrMkVerbose(svraddr.in, INADDR_ANY, port);
 
   int a;

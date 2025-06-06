@@ -12,9 +12,16 @@ typedef struct sockaddr_in  sockaddr_internal_t;
 typedef struct sockaddr     sockaddr_t;    
 typedef socklen_t socklen_t;
 
-#define sockaddr_internal_check(a, b) \
-((a)->sin_family == (b)->sin_family && \
-(a)->sin_addr.s_addr == (b)->sin_addr.s_addr && \
-(a)->sin_port == (b)->sin_port)
+typedef union uSockAddr {
+    sockaddr_t m_addr;
+    sockaddr_internal_t m_in;
+} uSockAddr;
+
+#define uSockAddrInCheck(a, b) \
+((a)->m_in.sin_family == (b)->m_in.sin_family && \
+(a)->m_in.sin_addr.s_addr == (b)->m_in.sin_addr.s_addr && \
+(a)->m_in.sin_port == (b)->m_in.sin_port)
+
+#define SockAddrLen     sizeof(sockaddr_internal_t)
 
 #endif

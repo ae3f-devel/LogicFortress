@@ -11,12 +11,11 @@ int main() {
     ae2f_InetMk(MAKEWORD(2, 2), &data);
 
     sock_t sock = socket(AF_INET, SOCK_DGRAM, 0);
-
-    sockaddr_internal_t in[1];
-    __SockAddrMk(in, "58.235.181.91", TEST_PORT);
+    uSockAddr in[1];
+    __uSockAddrMk(in, "127.0.0.1", TEST_PORT);
     room_t r;
 
-    ReqRoomLobby(sock, (sockaddr_t*)in, -1, &r, "FEARNOT", NULL, "Playername");
+    ReqRoomLobby(sock, in, -1, &r, "FEARNOT", NULL, "Playername");
 
     printf("%d\n", r);
 
