@@ -32,6 +32,7 @@ ae2f_extern ae2f_SHAREDCALL void SvrRes(room_t);
 static unsigned SvrStarted = 0;
 
 ae2f_extern ae2f_SHAREDCALL void SvrExit();
+ae2f_extern ae2f_SHAREDEXPORT unsigned short PORTMAIN = 0;
 
 /**
  * @brief
@@ -43,6 +44,8 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
     return 0;
   else
     SvrStarted = 1;
+
+  PORTMAIN = port;
 
   {
     ae2f_InetMkData mkdata;

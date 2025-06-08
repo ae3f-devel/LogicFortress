@@ -34,7 +34,7 @@
     dbg_puts("__SetPlayerOnline: ON");                                         \
     PlConns[globidx].m_addr = *(addr);                                         \
     Players[globidx].m_connected = 1;                                          \
-    if (Rooms[(globidx) / MAX_ROOM_MEM_COUNT].m_member++) {                    \
+    if (!(Rooms[(globidx) / MAX_ROOM_MEM_COUNT].m_member++)) {                 \
       __RoomActivate((globidx) / MAX_ROOM_MEM_COUNT);                          \
     }                                                                          \
   }

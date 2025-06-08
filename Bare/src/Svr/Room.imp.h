@@ -7,6 +7,8 @@
 #include "./RoomFlags.h"
 #include "./RoomPrivate.h"
 
+ae2f_extern ae2f_SHAREDCALL unsigned short PORTMAIN;
+
 #define __RoomInit(room)                                                       \
   {                                                                            \
     Rooms[(room)].m_Name[0] = 0;                                               \
@@ -168,7 +170,7 @@
     sock_t v_sock = socket(AF_INET, SOCK_DGRAM, 0);                            \
     uSockAddr v_addr;                                                          \
     v_addr = Svr.m_addr[0];                                                    \
-    v_addr.m_in.sin_port += room;                                              \
+    v_addr.m_in.sin_port = PORTMAIN + room + 1;                                \
     dbg_printf("New Port: %d\n", v_addr.m_in.sin_port);                        \
     if (v_sock < 0) {                                                          \
       dbg_puts("socket failed.");                                              \
