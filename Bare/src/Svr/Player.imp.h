@@ -5,18 +5,15 @@
 #include_next <Player.imp.h>
 #include <ae2f/Cast.h>
 #include <string.h>
-
 #define __IsPlayerNull(p) (!Players[(p)].m_connected)
-
-#if 1
-
-#endif
+#define __PlayerInit(p) (Players[p] = ae2f_RecordMk(Player, 0, 0, 0, ))
 
 #define __SetPlayerOffline(addr, retidx)                                       \
   for (*(retidx) = 0; *(retidx) < MAX_GLOBAL_PLAYER_COUNT; (*(retidx))++) {    \
     if (uSockAddrInCheckNPort((addr), (&PlConns[*(retidx)].m_addr))) {         \
       memset(&PlConns[*(retidx)].m_addr, 0,                                    \
              sizeof(PlConns[*(retidx)].m_addr));                               \
+      __PlayerInit(*(retidx));                                                 \
       Players[*(retidx)].m_connected = 0;                                      \
       if (!(--Rooms[(*(retidx)) / MAX_ROOM_MEM_COUNT].m_member)) {             \
         __RoomTerminate((*(retidx)) / MAX_ROOM_MEM_COUNT);                     \

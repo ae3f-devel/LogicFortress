@@ -61,6 +61,11 @@ ae2f_extern ae2f_SHAREDEXPORT void SvrUnit(room_t a) {
   Rooms[a].m_Name[0] = 0;
   Rooms[a].m_member = 0;
 
+  socklen_t v_addrlen;
+  ssize_t v_succeed;
+  ReqBuff v_reqbuff;
+  uSockAddr v_addr;
+
 __START:
   __ae2f_Wait(&RoomFlags[a], eRoomFlags_PAUSED);
 
@@ -79,6 +84,20 @@ __START:
 
     __RoomTerminate(a);
     RoomFlags[a] = eRoomFlags_PAUSED;
+    goto __START;
+  }
+
+  v_addrlen = SockAddrLen;
+
+  v_succeed = recvfrom(SvrUnits[a].ID.fd, (void *)&v_reqbuff,
+                       sizeof(Svr.m_reqbuff), 0, &v_addr.m_addr, &v_addrlen);
+
+  if (v_succeed < sizeof(req_t) || v_succeed > sizeof(Svr.m_reqbuff)) {
+    if (errno == EWOULDBLOCK || errno == EAGAIN) {
+      goto __START;
+    } else {
+      dbg_printf("recvfrom error: %d\n", errno);
+    }
     goto __START;
   }
 

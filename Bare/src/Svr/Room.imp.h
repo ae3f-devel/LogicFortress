@@ -152,15 +152,41 @@
   }
 
 #include "./SvrMain.h"
+#include <ae2f/Block.h>
 
 #define __RoomTerminate(room)                                                  \
   __RoomInit(room);                                                            \
   {                                                                            \
-    sock_t v_sock = SvrUnits[(room) + 1].ID.fd;                                \
-    SvrUnits[(room) + 1].ID.fd = INVALID_SOCKET;                               \
-    close(v_sock);                                                             \
+    sock_t v_sock = SvrUnits[(room)].ID.fd;                                    \
+    SvrUnits[(room)].ID.fd = INVALID_SOCKET;                                   \
+    if (v_sock != INVALID_SOCKET)                                              \
+      close(v_sock);                                                           \
   }
 
-#define __RoomActivate(room)
+#define __RoomActivate(room)                                                   \
+  {                                                                            \
+    sock_t v_sock = socket(AF_INET, SOCK_DGRAM, 0);                            \
+    uSockAddr v_addr;                                                          \
+    v_addr = Svr.m_addr[0];                                                    \
+    v_addr.m_in.sin_port += room;                                              \
+    dbg_printf("New Port: %d\n", v_addr.m_in.sin_port);                        \
+    if (v_sock < 0) {                                                          \
+      dbg_puts("socket failed.");                                              \
+      close(v_sock);                                                           \
+    }                                                                          \
+                                                                               \
+    int v_res;                                                                 \
+    ae2f_InetNBlock(v_sock, &v_res);                                           \
+    if (v_res) {                                                               \
+      dbg_printf("v_res is not zero. see %d\n", v_res);                        \
+    }                                                                          \
+                                                                               \
+    if ((v_res = bind(v_sock, &v_addr.m_addr, SockAddrLen))) {                 \
+      dbg_printf("bind has failed. see %d\n", v_res);                          \
+      close(v_sock);                                                           \
+    } else if (v_sock != INVALID_SOCKET) {                                     \
+      SvrUnits[room].ID.fd = v_sock;                                           \
+    }                                                                          \
+  }
 
 #endif

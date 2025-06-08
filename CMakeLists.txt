@@ -13,6 +13,7 @@ set(MAX_ROOM_NAME_COUNT         30)
 set(MAX_ROOM_PW                 30)
 
 set(MAX_PLAYER_NAME_COUNT       32)
+set(MAX_SKILL_COUNT		3)
 
 # DEBUG
 set(DEBUG                       1)
@@ -22,13 +23,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Plugins/${
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Plugins/${CMAKE_SYSTEM_PROCESSOR})
 
 # TYPES
-set(player_t        unsigned)
-set(globplayer_t    unsigned)
-set(room_t          unsigned)
+set(player_t        	unsigned)
+set(globplayer_t   	unsigned)
+set(room_t         	unsigned)
+set(character_t    	"unsigned char")
+set(skillid_t    	"unsigned char")
 
-set(player_cs_t        uint)
-set(globplayer_cs_t    uint)
-set(room_cs_t          uint)
+set(player_cs_t       	uint)
+set(globplayer_cs_t   	uint)
+set(room_cs_t         	uint)
+set(character_cs_t    	byte)
+set(skillid_t   	byte)
 
 set(sockaddrsz  16)
 
