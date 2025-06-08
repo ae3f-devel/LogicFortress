@@ -2,6 +2,7 @@
 #define RoomPrivate_h
 
 #include <Room.h>
+#include <ae2f/Atom.h>
 
 typedef struct RoomPrivate {
   char m_Pw[MAX_ROOM_PW];

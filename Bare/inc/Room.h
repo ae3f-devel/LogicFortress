@@ -36,8 +36,6 @@ typedef struct __ReqRoomLobbyBuf __ReqRoomLobbyBuf;
 typedef struct __ReqRoomShowBuf __ReqRoomShowBuf;
 
 #if SERVER
-
-
 ae2f_extern ae2f_SHAREDCALL void RoomLobby(room_t room, globplayer_t* retgplidx,
                                            const char *roomname, const char *pw,
                                            sock_t clientsocket,

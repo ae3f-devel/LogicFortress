@@ -5,10 +5,9 @@
 #include <ae2f/Atom.h>
 
 typedef struct PlConn {
-    ae2f_Atom(sock_t)    m_sock;
-    uSockAddr m_addr;
+  uSockAddr m_addr;
+  bool m_connected;
 } PlConn;
 
 ae2f_extern ae2f_SHAREDCALL PlConn PlConns[MAX_GLOBAL_PLAYER_COUNT];
-
 #endif

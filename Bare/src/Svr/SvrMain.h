@@ -3,14 +3,15 @@
 
 #include <Max.auto.h>
 #include <Room.h>
+#include <ae2f/Atom.h>
 #include <ae2f/Call.h>
 #include <ae2f/Cast.h>
 
 ae2f_extern ae2f_SHAREDCALL union _SvrUnit {
   struct _SvrUnitID {
-    sock_t fd;
+    ae2f_Atom(sock_t) fd;
 #ifdef __cplusplus
-    constexpr _SvrUnitID() : fd(0) {}
+    constexpr _SvrUnitID() : fd(INVALID_SOCKET) {}
     inline ~_SvrUnitID() {}
 #endif
   } ID;
@@ -20,7 +21,7 @@ ae2f_extern ae2f_SHAREDCALL union _SvrUnit {
     room_t room;
   } Game;
 #ifdef __cplusplus
-  constexpr _SvrUnit() : ID{} {}
+  constexpr _SvrUnit() : ID() {}
   inline ~_SvrUnit() {}
 #endif
 } SvrUnits[MAX_ROOM_COUNT + 1];
@@ -47,5 +48,7 @@ typedef struct _Svr {
 } _Svr;
 
 #include "./RoomFlags.h"
+
+ae2f_extern ae2f_SHAREDCALL _Svr Svr;
 
 #endif

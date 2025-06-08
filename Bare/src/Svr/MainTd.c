@@ -1,26 +1,27 @@
 #define SERVER 1
-#include "./SvrMain.h"
 #include "./RoomPrivate.h"
+#include "./SvrMain.h"
 
 #include <Dbg.h>
-#include <Room.h>
 #include <Req.h>
+#include <Room.h>
+#include <Sock.imp.h>
 
 #if _WIN32
 
-#define nonblock(sock, res)  \
-{ \
-    u_long mode = 1; \
-    if (ioctlsocket(sock, FIONBIO, &mode) != 0) { \
-        dbg_printf("ioctlsocket failed with error: %d\n", WSAGetLastError()); \
-        *(res) = -1; \
-    } \
-    *(res) = 0; \
-}
+#define nonblock(sock, res)                                                    \
+  {                                                                            \
+    u_long mode = 1;                                                           \
+    if (ioctlsocket(sock, FIONBIO, &mode) != 0) {                              \
+      dbg_printf("ioctlsocket failed with error: %d\n", WSAGetLastError());    \
+      *(res) = -1;                                                             \
+    }                                                                          \
+    *(res) = 0;                                                                \
+  }
 
 #define errno WSAGetLastError()
-#define EWOULDBLOCK   WSAEWOULDBLOCK
-#define EAGAIN        WSAEWOULDBLOCK
+#define EWOULDBLOCK WSAEWOULDBLOCK
+#define EAGAIN WSAEWOULDBLOCK
 
 #else
 #include <errno.h>
@@ -41,15 +42,13 @@
       v_flags |= O_NONBLOCK;                                                   \
       if (fcntl(fd, F_SETFL, v_flags) == -1) {                                 \
         perror("fcntl F_SETFL");                                               \
-        *(res) = -1;                                                            \
+        *(res) = -1;                                                           \
       } else                                                                   \
         *(res) = 0;                                                            \
     }                                                                          \
   }
 
 #endif
-
-
 
 #undef dbg_prefix
 #define dbg_prefix "[SvrUnit] "
@@ -70,15 +69,18 @@ ae2f_extern ae2f_SHAREDEXPORT void SvrUnit(union _SvrUnit *a) {
     dbg_puts("Waiting is over");
   }
 
-  __QUIT:
+__QUIT:
   dbg_printf("thread %p is over\n", a - SvrUnits);
 }
 
 #undef dbg_prefix
 #define dbg_prefix "[SvrRes] "
 
-ae2f_extern ae2f_SHAREDEXPORT 
-void SvrRes(union _SvrUnit *a) {
+ae2f_extern ae2f_SHAREDEXPORT _Svr Svr = {
+    0,
+};
+
+ae2f_extern ae2f_SHAREDEXPORT void SvrRes(union _SvrUnit *a) {
   if (!a)
     return;
 
@@ -89,7 +91,6 @@ void SvrRes(union _SvrUnit *a) {
     nonblock(a->ID.fd, &res);
   }
 
-  _Svr Svr = {0, };
   Svr.m_sock = a->ID.fd;
 
   while (a->ID.fd != INVALID_SOCKET) {
@@ -99,31 +100,36 @@ void SvrRes(union _SvrUnit *a) {
         recvfrom(Svr.m_sock, (void *)&Svr.m_reqbuff, sizeof(Svr.m_reqbuff), 0,
                  &Svr.m_addr->m_addr, &Svr.m_addrlen);
 
-    if(!RoomFlags[MAX_ROOM_COUNT]) {
+    if (!RoomFlags[MAX_ROOM_COUNT]) {
       RoomFlags[MAX_ROOM_COUNT] = 1;
-      __ae2f_WakeSingle(&RoomFlags[MAX_ROOM_COUNT]);
     }
 
-    if (Svr.m_succeed < sizeof(req_t) || Svr.m_succeed > sizeof(Svr.m_reqbuff)) {
-      if(errno == EWOULDBLOCK || errno == EAGAIN) {
+    if (Svr.m_succeed < sizeof(req_t) ||
+        Svr.m_succeed > sizeof(Svr.m_reqbuff)) {
+      if (errno == EWOULDBLOCK || errno == EAGAIN) {
         continue;
-      } else if(a->ID.fd == INVALID_SOCKET) {
+      } else if (a->ID.fd == INVALID_SOCKET) {
         break;
       }
       continue;
     }
 
-    if(Svr.m_succeed >= sizeof(req_t)) {
+    dbg_printf("Addrlen: %d\n", Svr.m_addrlen);
+
+    if (Svr.m_succeed >= sizeof(req_t)) {
       dbg_printf("Connect from somewhere. Req: %d\n", Svr.m_reqbuff.m_req);
     }
     switch (Svr.m_reqbuff.m_req) {
     case REQ_ROOMLOBBY:
-      if(Svr.m_succeed != sizeof(Svr.m_reqbuff.m_ReqRoomLobby)) continue;;
-      ResRoomLobby(Svr.m_sock, Svr.m_addr,
-                   &Svr.m_reqbuff.m_ReqRoomLobby);
+      if (Svr.m_succeed != sizeof(Svr.m_reqbuff.m_ReqRoomLobby))
+        continue;
+      ;
+      ResRoomLobby(Svr.m_sock, Svr.m_addr, &Svr.m_reqbuff.m_ReqRoomLobby);
       break;
     case REQ_ROOMSHOW:
-      if(Svr.m_succeed != sizeof(Svr.m_reqbuff.m_ReqRoomShow)) continue;;
+      if (Svr.m_succeed != sizeof(Svr.m_reqbuff.m_ReqRoomShow))
+        continue;
+      ;
       ResRoomShow(Svr.m_sock, Svr.m_addr, &Svr.m_reqbuff.m_ReqRoomShow);
       break;
     }

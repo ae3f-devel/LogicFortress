@@ -6,8 +6,8 @@
 #include <cstdlib>
 #include <new>
 
-#include <ae2f/Atom.h>
 #include "./RoomPrivate.h"
+#include <ae2f/Atom.h>
 
 #include "./PlConn.h"
 #include <Patternise.h>
@@ -40,26 +40,19 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
     }
   }
 
-  for(globplayer_t i = 0; i < MAX_GLOBAL_PLAYER_COUNT; i++) {
-    PlConns[i].m_sock = INVALID_SOCKET;
-  }
-
   sock_t svrfd = 0;
-  union {
-    sockaddr_t addr;
-    sockaddr_internal_t in[1];
-  } svraddr;
+  uSockAddr svraddr;
 
   if ((svrfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 
     close(svrfd);
     return 1;
   }
-  
-  __SockAddrMkVerbose(svraddr.in, INADDR_ANY, port);
+
+  __SockAddrMkVerbose(&svraddr.m_in, INADDR_ANY, port);
 
   int a;
-  if ((a = bind(svrfd, &svraddr.addr, sizeof(sockaddr_t)))) {
+  if ((a = bind(svrfd, &svraddr.m_addr, SockAddrLen))) {
     close(svrfd);
     return (a);
   }
@@ -67,15 +60,16 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
   SvrUnits->ID.fd = svrfd;
   new (&SvrTds->td) std::thread(SvrRes, (void *)(SvrUnits));
 
-  for (room_t i = 0; i < MAX_ROOM_COUNT; i++) {
-    SvrUnits[i + 1].Game.room = i;
-    SvrUnits[i + 1].ID.fd = svrfd;
-    new (&SvrTds[i + 1].td) std::thread(SvrUnit, (void *)(SvrUnits + i + 1));
-  }
+  for (globplayer_t i = 0; i < MAX_GLOBAL_PLAYER_COUNT; i++) {
+    if (!(i % MAX_ROOM_MEM_COUNT)) {
+      room_t j = i / MAX_ROOM_MEM_COUNT;
+      SvrUnits[j + 1].Game.room = j;
+      SvrUnits[j + 1].ID.fd = INVALID_SOCKET;
+      new (&SvrTds[j + 1].td) std::thread(SvrUnit, (void *)(SvrUnits + j + 1));
+    }
 
-  /** Waiting for thread be actually started. */
-  RoomFlags[MAX_ROOM_COUNT] = 0;
-  __ae2f_Wait(&RoomFlags[MAX_ROOM_COUNT], 0);
+    PlConns[i].m_connected = 0;
+  }
 
   return 0;
 }
@@ -84,11 +78,10 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
 
 ae2f_extern ae2f_SHAREDEXPORT void SvrExit() {
   close(SvrUnits->ID.fd);
-  
 
   for (size_t i = sizeof(SvrUnits) / sizeof(SvrUnits[0]) - 1; i != -1; i--) {
     SvrUnits[i].ID.fd = INVALID_SOCKET;
-    if(i) {
+    if (i) {
       RoomFlags[i - 1] = 2; /* Changing roomflags to stop waiting */
       __ae2f_WakeSingle(RoomFlags + i - 1); /* notify the memory */
     }
@@ -96,7 +89,8 @@ ae2f_extern ae2f_SHAREDEXPORT void SvrExit() {
     SvrTds[i].td.join();
     SvrTds[i].td.~thread();
 
-    if(i == 0) break;
+    if (i == 0)
+      break;
   }
 
   ae2f_InetDel();
