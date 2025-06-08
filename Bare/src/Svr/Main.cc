@@ -79,7 +79,7 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
       new (&SvrTds[j].td) std::thread(SvrUnit, j);
     }
 
-    PlConns[i].m_connected = 0;
+    Players[i].m_connected = 0;
   }
 
   return 0;

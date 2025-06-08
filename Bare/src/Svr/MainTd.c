@@ -66,13 +66,23 @@ __START:
 
   switch (RoomFlags[a]) {
   case eRoomFlags_PAUSED:
-  case eRoomFlags_RUNNING:
     goto __START;
-
   case eRoomFlags_KILL:
+    goto __QUIT;
+  case eRoomFlags_RUNNING:
     break;
   }
 
+  if (SvrUnits[a].ID.fd == INVALID_SOCKET) {
+    dbg_puts("Socket is invalid.\n"
+             "Back to suspend...");
+
+    __RoomTerminate(a);
+    RoomFlags[a] = eRoomFlags_PAUSED;
+    goto __START;
+  }
+
+  goto __START;
 __QUIT:
   __RoomTerminate(a);
   dbg_printf("thread %p is over\n", a);

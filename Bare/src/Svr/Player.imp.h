@@ -17,7 +17,7 @@
     if (uSockAddrInCheckNPort((addr), (&PlConns[*(retidx)].m_addr))) {         \
       memset(&PlConns[*(retidx)].m_addr, 0,                                    \
              sizeof(PlConns[*(retidx)].m_addr));                               \
-      PlConns[*(retidx)].m_connected = 0;                                      \
+      Players[*(retidx)].m_connected = 0;                                      \
       if (!(--Rooms[(*(retidx)) / MAX_ROOM_MEM_COUNT].m_member)) {             \
         __RoomTerminate((*(retidx)) / MAX_ROOM_MEM_COUNT);                     \
       }                                                                        \
@@ -36,7 +36,7 @@
   if ((addr) && __IsPlayerNull((globidx))) {                                   \
     dbg_puts("__SetPlayerOnline: ON");                                         \
     PlConns[globidx].m_addr = *(addr);                                         \
-    PlConns[globidx].m_connected = 1;                                          \
+    Players[globidx].m_connected = 1;                                          \
     if (Rooms[(globidx) / MAX_ROOM_MEM_COUNT].m_member++) {                    \
       __RoomActivate((globidx) / MAX_ROOM_MEM_COUNT);                          \
     }                                                                          \
