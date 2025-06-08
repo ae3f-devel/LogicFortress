@@ -1,4 +1,5 @@
 #define SERVER 1
+#include "./Room.imp.h"
 #include "./RoomPrivate.h"
 #include "./SvrMain.h"
 
@@ -53,24 +54,28 @@
 #undef dbg_prefix
 #define dbg_prefix "[SvrUnit] "
 
-ae2f_extern ae2f_SHAREDEXPORT void SvrUnit(union _SvrUnit *a) {
-  assert(a);
+ae2f_extern ae2f_SHAREDEXPORT void SvrUnit(room_t a) {
+  dbg_printf("thread %p has started\n", a);
+  Rooms[a].m_started = 0;
+  RoomFlags[a] = eRoomFlags_PAUSED;
+  Rooms[a].m_Name[0] = 0;
+  Rooms[a].m_member = 0;
 
-  if (a->ID.fd == INVALID_SOCKET)
-    return;
+__START:
+  __ae2f_Wait(&RoomFlags[a], eRoomFlags_PAUSED);
 
-  dbg_printf("thread %p has started\n", a - SvrUnits);
-  Rooms[a->Game.room].m_started = 0;
-  RoomFlags[a->Game.room] = 0;
+  switch (RoomFlags[a]) {
+  case eRoomFlags_PAUSED:
+  case eRoomFlags_RUNNING:
+    goto __START;
 
-  while (a->ID.fd != INVALID_SOCKET) {
-    dbg_puts("Waiting...");
-    __ae2f_Wait(RoomFlags + a->Game.room, 0);
-    dbg_puts("Waiting is over");
+  case eRoomFlags_KILL:
+    break;
   }
 
 __QUIT:
-  dbg_printf("thread %p is over\n", a - SvrUnits);
+  __RoomTerminate(a);
+  dbg_printf("thread %p is over\n", a);
 }
 
 #undef dbg_prefix
@@ -80,20 +85,17 @@ ae2f_extern ae2f_SHAREDEXPORT _Svr Svr = {
     0,
 };
 
-ae2f_extern ae2f_SHAREDEXPORT void SvrRes(union _SvrUnit *a) {
-  if (!a)
-    return;
-
-  dbg_printf("thread %p has started\n", a - SvrUnits);
-
+ae2f_extern ae2f_SHAREDEXPORT void SvrRes(room_t a) {
+  RoomFlags[a] = eRoomFlags_RUNNING;
   {
     int res;
-    nonblock(a->ID.fd, &res);
+    nonblock(SvrUnits[a].ID.fd, &res);
   }
 
-  Svr.m_sock = a->ID.fd;
+  Svr.m_sock = SvrUnits[a].ID.fd;
+  dbg_printf("Socket: %d\n", SvrUnits[a].ID.fd);
 
-  while (a->ID.fd != INVALID_SOCKET) {
+  while (SvrUnits[a].ID.fd != INVALID_SOCKET) {
     Svr.m_addrlen = SockAddrLen;
 
     Svr.m_succeed =
@@ -108,7 +110,7 @@ ae2f_extern ae2f_SHAREDEXPORT void SvrRes(union _SvrUnit *a) {
         Svr.m_succeed > sizeof(Svr.m_reqbuff)) {
       if (errno == EWOULDBLOCK || errno == EAGAIN) {
         continue;
-      } else if (a->ID.fd == INVALID_SOCKET) {
+      } else if (SvrUnits[a].ID.fd == INVALID_SOCKET) {
         break;
       }
       continue;
@@ -135,5 +137,5 @@ ae2f_extern ae2f_SHAREDEXPORT void SvrRes(union _SvrUnit *a) {
     }
   }
 
-  dbg_printf("thread %p is over\n", a - SvrUnits);
+  dbg_printf("thread %p is over\n", a);
 }

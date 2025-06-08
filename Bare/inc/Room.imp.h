@@ -9,13 +9,8 @@
 
 #define __GetPlayerIndex(roomid, playerid)                                     \
   ((((roomid)) * MAX_ROOM_PLAYER_COUNT) + (playerid))
-  
-#define __GetRoomIndex(globplayerid) \
-  ((globplayerid) / MAX_ROOM_PLAYER_COUNT)
 
-#define __RoomInit(room) \
-  {(room)->m_Name[0] = 0; \
-  (room)->m_started = 0;}
+#define __GetRoomIndex(globplayerid) ((globplayerid) / MAX_ROOM_PLAYER_COUNT)
 
 /**
  * @details
@@ -31,15 +26,15 @@
  * v_res:
  *  [room_t]
  */
-#define __ReqRoomLobby(svrsock, svraddr, room, retgplidx, name /*opt*/,          \
+#define __ReqRoomLobby(svrsock, svraddr, room, retgplidx, name /*opt*/,        \
                        pw /*opt*/, clientname /*opt*/)                         \
   {                                                                            \
-    if (!((svraddr) && (retgplidx)))                                             \
+    if (!((svraddr) && (retgplidx)))                                           \
       ;                                                                        \
     if ((!(svraddr) || (svrsock) == INVALID_SOCKET)) {                         \
       when_SERVER(                                                             \
-          RoomLobby(room, retgplidx, name, pw, svrsock, svraddr, clientname));   \
-      when_CLIENT(*(retgplidx) = -1);                                            \
+          RoomLobby(room, retgplidx, name, pw, svrsock, svraddr, clientname)); \
+      when_CLIENT(*(retgplidx) = -1);                                          \
     } else {                                                                   \
       __ReqRoomLobbyBuf v_req = {                                              \
           0,                                                                   \
@@ -56,25 +51,22 @@
         if (pw)                                                                \
           strncpy(v_req.m_rpwd, (pw), MAX_ROOM_PW);                            \
       }                                                                        \
-      v_bytes = sendto((svrsock), (const void*)&v_req, sizeof(v_req), 0, &(svraddr)->m_addr,         \
-                       SockAddrLen);                           \
+      v_bytes = sendto((svrsock), (const void *)&v_req, sizeof(v_req), 0,      \
+                       &(svraddr)->m_addr, SockAddrLen);                       \
                                                                                \
       if (v_bytes != sizeof(v_req)) {                                          \
-        (*(retgplidx) = -1);                                                     \
+        (*(retgplidx) = -1);                                                   \
       }                                                                        \
                                                                                \
       else {                                                                   \
-        uSockAddr v_from[1];                                         \
-        socklen_t v_fromlen[1] = {SockAddrLen};                         \
-        if (recvfrom((svrsock), (void*)(retgplidx), sizeof(room_t), 0,                  \
-                     &v_from->m_addr,              \
-                     v_fromlen) != sizeof(room_t)) {                           \
-          (*(retgplidx) = -1);                                                   \
+        uSockAddr v_from[1];                                                   \
+        socklen_t v_fromlen[1] = {SockAddrLen};                                \
+        if (recvfrom((svrsock), (void *)(retgplidx), sizeof(room_t), 0,        \
+                     &v_from->m_addr, v_fromlen) != sizeof(room_t)) {          \
+          (*(retgplidx) = -1);                                                 \
         }                                                                      \
-        if (!uSockAddrInCheck(                                          \
-                v_from,                                                        \
-                (svraddr))) {      \
-          (*(retgplidx) = -1); /* invalid, socket address does not match. */     \
+        if (!uSockAddrInCheck(v_from, (svraddr))) {                            \
+          (*(retgplidx) = -1); /* invalid, socket address does not match. */   \
         }                                                                      \
       }                                                                        \
     }                                                                          \

@@ -56,7 +56,7 @@ namespace Core.Net
         /// </param>
         /// <param name="clientname">
         /// Character name after getting in room will be displayed
-        /// ]</param>
+        /// </param>
         [DllImport("libCli", CharSet = CharSet.Ansi)]
         internal static extern void ReqRoomLobby(
             int svrsock, in SockAddr svraddr,

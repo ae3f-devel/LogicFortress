@@ -18,23 +18,12 @@ ae2f_extern ae2f_SHAREDCALL union _SvrUnit {
 
   struct _SvrUnitGame {
     struct _SvrUnitID _;
-    room_t room;
   } Game;
 #ifdef __cplusplus
   constexpr _SvrUnit() : ID() {}
   inline ~_SvrUnit() {}
 #endif
 } SvrUnits[MAX_ROOM_COUNT + 1];
-
-#ifdef __cplusplus
-#include <thread>
-ae2f_extern ae2f_SHAREDCALL union _SvrUnitIDHandle {
-  std::thread td;
-  char a;
-  inline ~_SvrUnitIDHandle() {}
-  constexpr _SvrUnitIDHandle() : a(0) {}
-} SvrTds[MAX_ROOM_COUNT + 1];
-#endif
 
 #include "./ReqBuff.h"
 

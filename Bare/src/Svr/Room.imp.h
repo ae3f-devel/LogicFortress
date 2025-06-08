@@ -7,6 +7,12 @@
 #include "./RoomFlags.h"
 #include "./RoomPrivate.h"
 
+#define __RoomInit(room)                                                       \
+  {                                                                            \
+    Rooms[(room)].m_Name[0] = 0;                                               \
+    Rooms[(room)].m_started = 0;                                               \
+  }
+
 /** When ret_i is MAX, it is blank */
 #define __IsRoomNOccupied(r, ret_i)                                            \
   if (ret_i)                                                                   \
@@ -15,13 +21,11 @@
 #define __IsRoomNFull(r, ret_i, addr)                                          \
   if (ret_i)                                                                   \
     for (*(ret_i) = 0; *(ret_i) < MAX_ROOM_MEM_COUNT; (*(ret_i))++) {          \
-      if (__IsPlayerNull(PlConns + (((r) - Rooms) * MAX_ROOM_MEM_COUNT) +      \
-                         *(ret_i)))                                            \
+      if (__IsPlayerNull((((r)) * MAX_ROOM_MEM_COUNT) + *(ret_i)))             \
         break;                                                                 \
       if (uSockAddrInCheck(                                                    \
               addr,                                                            \
-              (&(PlConns + (((r) - Rooms) * MAX_ROOM_MEM_COUNT) + *(ret_i))    \
-                    ->m_addr)))                                                \
+              (&(PlConns + (((r)) * MAX_ROOM_MEM_COUNT) + *(ret_i))->m_addr))) \
         break;                                                                 \
     }
 
@@ -43,7 +47,7 @@
     if (Rooms[*(reti)].m_Name[0])                                              \
       continue;                                                                \
     for (*(pl) = 0; *(pl) < MAX_ROOM_PLAYER_COUNT; (*(pl))++) {                \
-      if (__IsPlayerNull(&PlConns[(*(reti)) * MAX_ROOM_MEM_COUNT + (*(pl))]))  \
+      if (__IsPlayerNull((*(reti)) * MAX_ROOM_MEM_COUNT + (*(pl))))            \
         break;                                                                 \
     }                                                                          \
   }
@@ -118,7 +122,7 @@
             *(retgplidx) = -1;                                                 \
           } else {                                                             \
             dbg_printf("The room %d is occupied by someone.\n", (room));       \
-            __IsRoomNFull(Rooms + (room), &reti, addr);                        \
+            __IsRoomNFull((room), &reti, addr);                                \
             if (reti != MAX_ROOM_MEM_COUNT) {                                  \
               dbg_printf("The room %d is valid.\n", (room));                   \
               if (((pw) && !strncmp(RoomPrivates[(room)].m_Pw, (pw),           \
@@ -152,8 +156,8 @@
 #define __RoomTerminate(room)                                                  \
   __RoomInit(room);                                                            \
   {                                                                            \
-    sock_t v_sock = SvrUnits[(room) - Rooms + 1].ID.fd;                        \
-    SvrUnits[(room) - Rooms + 1].ID.fd = INVALID_SOCKET;                       \
+    sock_t v_sock = SvrUnits[(room) + 1].ID.fd;                                \
+    SvrUnits[(room) + 1].ID.fd = INVALID_SOCKET;                               \
     close(v_sock);                                                             \
   }
 

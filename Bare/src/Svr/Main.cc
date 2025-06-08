@@ -12,11 +12,22 @@
 #include "./PlConn.h"
 #include <Patternise.h>
 
-ae2f_extern ae2f_SHAREDEXPORT _SvrUnit SvrUnits[MAX_ROOM_COUNT + 1] = {};
-ae2f_extern ae2f_SHAREDEXPORT _SvrUnitIDHandle SvrTds[MAX_ROOM_COUNT + 1] = {};
+#include "./Room.imp.h"
 
-ae2f_extern ae2f_SHAREDCALL void SvrUnit(void *);
-ae2f_extern ae2f_SHAREDCALL void SvrRes(void *);
+#include <thread>
+
+union _SvrUnitIDHandle {
+  std::thread td;
+  char a;
+  inline ~_SvrUnitIDHandle() {}
+  constexpr _SvrUnitIDHandle() : a(0) {}
+};
+
+ae2f_extern ae2f_SHAREDEXPORT union _SvrUnit SvrUnits[MAX_ROOM_COUNT + 1] = {};
+static union _SvrUnitIDHandle SvrTds[MAX_ROOM_COUNT + 1] = {};
+
+ae2f_extern ae2f_SHAREDCALL void SvrUnit(room_t);
+ae2f_extern ae2f_SHAREDCALL void SvrRes(room_t);
 
 static unsigned SvrStarted = 0;
 
@@ -44,7 +55,7 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
   uSockAddr svraddr;
 
   if ((svrfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-
+    dbg_puts("socket has failed");
     close(svrfd);
     return 1;
   }
@@ -53,19 +64,19 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
 
   int a;
   if ((a = bind(svrfd, &svraddr.m_addr, SockAddrLen))) {
+    dbg_puts("bind has failed");
     close(svrfd);
     return (a);
   }
 
-  SvrUnits->ID.fd = svrfd;
-  new (&SvrTds->td) std::thread(SvrRes, (void *)(SvrUnits));
+  SvrUnits[MAX_ROOM_COUNT].ID.fd = svrfd;
+  new (&SvrTds[MAX_ROOM_COUNT].td) std::thread(SvrRes, MAX_ROOM_COUNT);
 
   for (globplayer_t i = 0; i < MAX_GLOBAL_PLAYER_COUNT; i++) {
     if (!(i % MAX_ROOM_MEM_COUNT)) {
       room_t j = i / MAX_ROOM_MEM_COUNT;
-      SvrUnits[j + 1].Game.room = j;
-      SvrUnits[j + 1].ID.fd = INVALID_SOCKET;
-      new (&SvrTds[j + 1].td) std::thread(SvrUnit, (void *)(SvrUnits + j + 1));
+      SvrUnits[j].ID.fd = INVALID_SOCKET;
+      new (&SvrTds[j].td) std::thread(SvrUnit, j);
     }
 
     PlConns[i].m_connected = 0;
@@ -77,20 +88,23 @@ ae2f_extern ae2f_SHAREDEXPORT int SvrMain(unsigned short port) {
 #include "./SvrMain.h"
 
 ae2f_extern ae2f_SHAREDEXPORT void SvrExit() {
-  close(SvrUnits->ID.fd);
+  close(SvrUnits[MAX_ROOM_COUNT].ID.fd);
 
-  for (size_t i = sizeof(SvrUnits) / sizeof(SvrUnits[0]) - 1; i != -1; i--) {
-    SvrUnits[i].ID.fd = INVALID_SOCKET;
-    if (i) {
-      RoomFlags[i - 1] = 2; /* Changing roomflags to stop waiting */
-      __ae2f_WakeSingle(RoomFlags + i - 1); /* notify the memory */
+  size_t i = MAX_ROOM_COUNT;
+  goto LOOPSTART;
+
+  for (; i != -1; i--) {
+    {
+      RoomFlags[i] = eRoomFlags_KILL;
+      ;                                 /* Changing roomflags to stop waiting */
+      __ae2f_WakeSingle(RoomFlags + i); /* notify the memory */
+      __RoomTerminate(i);
     }
 
+  LOOPSTART:
+    SvrUnits[i].ID.fd = INVALID_SOCKET;
     SvrTds[i].td.join();
     SvrTds[i].td.~thread();
-
-    if (i == 0)
-      break;
   }
 
   ae2f_InetDel();
