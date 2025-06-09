@@ -12,11 +12,11 @@ namespace Test
             int a = 0;
             if (a == 0)
             {
-                _Room[] rooms = new _Room[5];
+                Room[] rooms = new Room[5];
 
                 unsafe
                 {
-                    fixed (_Room* _r = rooms)
+                    fixed (Room* _r = rooms)
                     {
                         Sock sock = new Sock();
                         SockAddr addr = new SockAddr("127.0.0.1", Port.PORT);
