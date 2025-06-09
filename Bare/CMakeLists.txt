@@ -56,3 +56,6 @@ if(NOT WIN32)
 endif()
 
 ae2f_CoreTestTent(libCli ${PROJECT_SOURCE_DIR}/test/units)
+if(WIN32)
+    target_compile_options(libCli PRIVATE -static-libgcc -static-libstdc++)
+endif()
