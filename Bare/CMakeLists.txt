@@ -68,4 +68,9 @@ if(WIN32)
        		COPY "C:/mingw64/bin/libstdc++-6.dll" 
 	 	DESTINATION "${PROJECT_SOURCE_DIR}/../Assets/Plugins/"
    	)
+
+      	file(
+       		COPY "C:/mingw64/bin/libwinpthread-1.dll" 
+	 	DESTINATION "${PROJECT_SOURCE_DIR}/../Assets/Plugins/"
+   	)
 endif()
