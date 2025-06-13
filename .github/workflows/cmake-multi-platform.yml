@@ -45,7 +45,7 @@ jobs:
 
     - name: Test
       run: >
-        git status >> "$GITHUB_OUTPUT"
+        git status
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
