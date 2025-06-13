@@ -4,6 +4,8 @@
 #include "./Dbg.h"
 #include "./Patternise.h"
 #include "./Sock.h"
+
+#include <ae2f/Macro.h>
 #include <string.h>
 
 #define __SockAddrMkVerbose(addr, ip, port)                                    \
