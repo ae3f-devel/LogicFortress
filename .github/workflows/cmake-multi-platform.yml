@@ -51,10 +51,7 @@ jobs:
         cmake 
         -B ${{ steps.strings.outputs.build-output-dir }}
         -S ${{ github.workspace }}
-        -D _CRT_SECURE_NO_WARNINGS=1
-        -D _WINSOCK_DEPRECATED_NO_WARNINGS=1
-        -D ae2f_CXX=OFF
-        -D CMAKE_C_STANDARD=11
+        -G Ninja
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
