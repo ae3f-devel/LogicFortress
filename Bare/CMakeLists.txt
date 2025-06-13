@@ -57,5 +57,6 @@ endif()
 
 ae2f_CoreTestTent(libCli ${PROJECT_SOURCE_DIR}/test/units)
 if(WIN32)
+	message("[WINDOWS DETECTED] libgcc will be static")
     target_compile_options(libCli PRIVATE -static-libgcc -static-libstdc++)
 endif()
