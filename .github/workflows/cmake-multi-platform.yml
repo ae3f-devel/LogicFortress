@@ -52,6 +52,7 @@ jobs:
         -B ${{ steps.strings.outputs.build-output-dir }}
         -S ${{ github.workspace }}
         -D _CRT_SECURE_NO_WARNINGS=1
+        -D _WINSOCK_DEPRECATED_NO_WARNINGS
         -D ae2f_CXX=OFF
 
     - name: Build
