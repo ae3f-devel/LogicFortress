@@ -75,6 +75,10 @@ jobs:
         git config user.name BOT
         git config user.email a@a.com
 
+    - name: Fetch & Pull
+      run: >
+        git fetch && git pull
+
     - name: git Commit
       run: git commit -m "[CI/CD] Generated plugin build automation"
     
