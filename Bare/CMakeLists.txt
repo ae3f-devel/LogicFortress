@@ -2,7 +2,6 @@ include(_.cmake)
 ae2f_CoreLibFetch(ae2f Core main)
 ae2f_CoreLibFetch(ae2f Inet main)
 ae2f_CoreLibFetch(ae2f Ruler main)
-ae2f_CoreLibFetch(ae2f Macro main)
 
 project(Bare)
 
@@ -23,7 +22,6 @@ file(GLOB libCli-src ${PROJECT_SOURCE_DIR}/src/Cli/*)
 add_library(incCore INTERFACE ${incCore-src})
 target_include_directories(incCore  INTERFACE ${PROJECT_SOURCE_DIR}/inc)
 target_link_libraries(incCore       INTERFACE Inet)
-target_link_libraries(incCore       INTERFACE Macro)
 
 add_library(incSvr  INTERFACE ${incSvr-src})
 add_library(incCli  INTERFACE ${incCli-src})
