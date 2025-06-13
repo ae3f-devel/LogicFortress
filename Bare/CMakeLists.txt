@@ -62,6 +62,6 @@ if(WIN32)
      	target_compile_options(libSvrUDP PRIVATE -static-libgcc -static-libstdc++)
       	file(
        		COPY "C:/mingw64/bin/libgcc_s_seh-1.dll" 
-	 	DESTINATION "${PROJECT_SOURCE_DIR}/../Assets/Plugins/libgcc_s_seh-1.dll"
+	 	DESTINATION "${PROJECT_SOURCE_DIR}/../Assets/Plugins/"
    	)
 endif()
