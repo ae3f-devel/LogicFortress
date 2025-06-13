@@ -26,13 +26,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         build_type: [Release]
-        include:
-          - os: windows-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
 
     steps:
     - uses: actions/checkout@v4
@@ -58,7 +51,7 @@ jobs:
         cmake 
         -B ${{ steps.strings.outputs.build-output-dir }}
         -S ${{ github.workspace }}
-        -D_CRT_SECURE_NO_WARNINGS
+        -D _CRT_SECURE_NO_WARNINGS=1
         -D ae2f_CXX=OFF
 
     - name: Build
