@@ -67,6 +67,10 @@ jobs:
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
+    - name: Fetch & Pull
+      run: >
+        git fetch && git pull
+
     - name: Git Add
       run: git add ./Assets/Plugins
 
@@ -74,10 +78,6 @@ jobs:
       run: |
         git config user.name BOT
         git config user.email a@a.com
-
-    - name: Fetch & Pull
-      run: >
-        git fetch && git pull
 
     - name: git Commit
       run: git commit -m "[CI/CD] Generated plugin build automation"
