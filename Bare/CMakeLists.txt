@@ -60,5 +60,8 @@ if(WIN32)
 	message("[WINDOWS DETECTED] libgcc will be static")
     	target_compile_options(libCli PRIVATE -static-libgcc -static-libstdc++)
      	target_compile_options(libSvrUDP PRIVATE -static-libgcc -static-libstdc++)
-      	file(COPY "C:/System32/libgcc_s_seh-1.dll" DESTINATION "${PROJECT_SOURCE_DIR}/../Plugins/libgcc_s_seh-1.dll")
+      	file(
+       		COPY "C:/mingw64/bin/libgcc_s_seh-1.dll" 
+	 	DESTINATION "${PROJECT_SOURCE_DIR}/../Plugins/libgcc_s_seh-1.dll"
+   	)
 endif()
