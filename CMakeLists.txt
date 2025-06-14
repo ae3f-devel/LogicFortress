@@ -3,6 +3,7 @@ enable_testing()
 
 option(ae2f_IS_SHARED	"DLL EXPORT"	ON)
 option(ae2f_TEST	""	                ON)
+option(ae2f_nakedalais "alais naked on ae2f_CoreLibTentConfigCustom" ON)
 
 # MAX
 set(MAX_ROOM_COUNT              10)

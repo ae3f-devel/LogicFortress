@@ -94,3 +94,4 @@ build/
 Assets/Plugins/*.meta
 Assets/Plugins/*.c*
 Bare/*
+Bare
