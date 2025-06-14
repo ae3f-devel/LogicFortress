@@ -1,0 +1,82 @@
+name: Build on Issue
+on:
+  issues:
+    types: [opened]
+
+permissions: write-all
+    
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Post welcome comment
+        run: |
+          gh issue comment $ISSUE_NUMBER --body "I build on issue."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        build_type: [Release]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: 'main'
+        fetch-depth: '0'
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+    - name: Configure Git
+      run: |
+        cd LogicFortress
+        git config user.name "BOT"
+        git config user.email "a@a.com"
+
+    - name: Cleanup
+      uses: JesseTG/rm@v1.0.3
+      with:
+        path: ./Assets/Plugins
+
+    - name: Git Add Cleanup
+      run: |
+        git add ./Assets/Plugins
+
+    - name: Git Commit Cleanup
+      run: |
+        git commit -m "[CI/CD] Previous binaries removal"
+
+    - name: Configure CMake
+      run: |
+        cmake -B build -S . -G Ninja
+
+    - name: Build
+      run: |
+        cmake --build ./build --config ${{ matrix.build_type }}
+
+    - name: Git Add Build Output
+      run: |
+        git add ./Assets/
+
+    - name: Git Commit Build
+      run: |
+        git commit -m "[CI/CD] Generated plugin build automation"
+
+    - name: Push Changes
+      run: |
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ae3f-devel/LogicFortress.git origin main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
