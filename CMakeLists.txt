@@ -40,6 +40,11 @@ set(sockaddrsz  16)
 # TEST PORT VAL
 set(TEST_PORT           6767)
 
+execute_process(
+	COMMAND git clone https://github.com/ae3f-devel/Bare Bare
+	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+)
+
 add_subdirectory(Bare)
 
 configure_file(
@@ -61,3 +66,22 @@ configure_file(
     ${PROJECT_SOURCE_DIR}/Bare/auto/cs/TestPort.cs 
     ${PROJECT_SOURCE_DIR}/Assets/Scripts/Test/Port.auto.cs
     )
+
+if(WIN32)
+	message("[WINDOWS DETECTED] libgcc will be static")
+    	target_compile_options(libCli PRIVATE -static-libgcc -static-libstdc++)
+    	target_compile_options(libCli PRIVATE -static-libgcc -static-libstdc++)
+     	target_compile_options(libSvrUDP PRIVATE -static-libgcc -static-libstdc++)
+      	file(
+       		COPY "C:/mingw64/bin/libgcc_s_seh-1.dll" 
+	 	DESTINATION "${PROJECT_SOURCE_DIR}/Assets/Plugins/"
+   	)
+      	file(
+       		COPY "C:/mingw64/bin/libstdc++-6.dll" 
+		DESTINATION "${PROJECT_SOURCE_DIR}/Assets/Plugins/"
+   	)
+      	file(
+       		COPY "C:/mingw64/bin/libwinpthread-1.dll" 
+	 	DESTINATION "${PROJECT_SOURCE_DIR}/Assets/Plugins/"
+   	)
+endif()

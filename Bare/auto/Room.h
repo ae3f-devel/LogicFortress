@@ -1,1 +1,0 @@
-typedef @room_t@ room_t;
