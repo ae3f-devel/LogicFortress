@@ -13,6 +13,7 @@ jobs:
     steps:
       - name: Post welcome comment
         run: |
+          cd ${{ github.workspace }} &&
           gh issue comment $ISSUE_NUMBER --body "I build on issue."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -41,7 +42,6 @@ jobs:
 
     - name: Configure Git
       run: |
-        cd LogicFortress
         git config user.name "BOT"
         git config user.email "a@a.com"
 
