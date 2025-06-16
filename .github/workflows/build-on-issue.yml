@@ -51,6 +51,8 @@ jobs:
       run: |
         git config user.name "BOT"
         git config user.email "a@a.com"
+        git fetch
+        git pull
 
     - name: Cleanup
       uses: JesseTG/rm@v1.0.3
