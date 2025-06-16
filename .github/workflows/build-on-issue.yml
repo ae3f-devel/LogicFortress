@@ -75,6 +75,10 @@ jobs:
       run: |
         cmake --build ./build --config ${{ matrix.build_type }}
 
+    - name: Test
+      run: |
+        ctest --test-dir build -C ${{ matrix.build_type }}
+
     - name: Git Add Build Output
       run: |
         git add ./Assets/
