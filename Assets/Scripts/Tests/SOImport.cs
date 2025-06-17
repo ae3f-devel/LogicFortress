@@ -1,7 +1,9 @@
 using System.Runtime.InteropServices;
+using Unity.VisualScripting;
+using UnityEditor.EditorTools;
 using UnityEngine;
 
-namespace Test
+namespace Tests
 {
     internal class SOImport : MonoBehaviour
     {
@@ -9,10 +11,11 @@ namespace Test
         public static extern void Test(out int a);
         public void Awake()
         {
+#if UNITY_EDITOR
             int a = 5;
             Test(out a);
-
             Debug.Log($"DLL IMPORT TEST: {a}");
+#endif
         }
     }
 }

@@ -1,6 +1,6 @@
 using Core.Net;
 
-namespace Test
+namespace Tests
 {
     internal class TestSvr : Svr
     {

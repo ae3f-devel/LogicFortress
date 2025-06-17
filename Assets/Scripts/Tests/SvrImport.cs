@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace Test
+namespace Tests
 {
     internal class SvrImport : MonoBehaviour
     {
@@ -9,10 +9,12 @@ namespace Test
         public static extern int SvrTest();
         public void Awake()
         {
+#if UNITY_EDITOR
             int a = 0;
-	        a = SvrTest();
+            a = SvrTest();
 
             Debug.Log($"DLL IMPORT TEST: {a}");
+#endif
         }
     }
 }

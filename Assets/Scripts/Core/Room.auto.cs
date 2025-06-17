@@ -1,4 +1,8 @@
+using globplayer_t = System.UInt32;
+using room_t = System.UInt32;
+using player_t = System.UInt32;
 using System.Runtime.InteropServices;
+
 
 namespace Core
 {
@@ -16,7 +20,8 @@ namespace Core
         public uint m_member;
     }
 
-    public struct room_t {
-        public uint a;
+    public struct RoomIndex {
+        public System.UInt32 a;
+        public const System.UInt32 INVALID = System.UInt32.MaxValue;
     }
 }

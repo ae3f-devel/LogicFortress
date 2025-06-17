@@ -1,3 +1,7 @@
+using globplayer_t = System.UInt32;
+using room_t = System.UInt32;
+using player_t = System.UInt32;
+using System;
 
 namespace Core
 {
@@ -5,21 +9,31 @@ namespace Core
         public const int MAX_GLOBAL_PLAYER_COUNT = ((6 + 2) * 10);
     }
 
-    public struct player_t {
-        public uint a;
+    public struct PlayerIndex {
+        public System.UInt32 a;
+        public const System.UInt32 INVALID = System.UInt32.MaxValue;
     }
 
-    public struct globplayer_t {
-        public uint a;
+    public struct GlobPlayerIndex {
+        public System.UInt32 a;
 
-        public bool isvalid { get { return this.a != uint.MaxValue; } }
+        public const System.UInt32 INVALID =  System.UInt32.MaxValue;
+
+        public bool isvalid { get { return this.a != INVALID; } }
+
+        public void ThrowOnNValid()
+        {
+            if (a == INVALID)
+                throw new Exception("room must not be invalid");
+        }
 
         public room_t room
         {
             get
             {
+                ThrowOnNValid();
                 room_t r;
-                r.a = (uint)(a / Room.MAX_ROOM_MEM_COUNT);
+                r = (System.UInt32)(a / Room.MAX_ROOM_MEM_COUNT);
                 return r;
             }
         }
@@ -28,8 +42,9 @@ namespace Core
         {
             get
             {
+                ThrowOnNValid();
                 player_t player;
-                player.a = (uint)(a % Room.MAX_ROOM_MEM_COUNT);
+                player = (System.UInt32)(a % Room.MAX_ROOM_MEM_COUNT);
                 return player;
             }
         }

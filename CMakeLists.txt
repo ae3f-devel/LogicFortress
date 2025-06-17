@@ -30,9 +30,9 @@ set(room_t         	unsigned)
 set(character_t    	"unsigned char")
 set(skillid_t    	"unsigned char")
 
-set(player_cs_t       	uint)
-set(globplayer_cs_t   	uint)
-set(room_cs_t         	uint)
+set(player_cs_t       	System.UInt32)
+set(globplayer_cs_t   	System.UInt32)
+set(room_cs_t         	System.UInt32)
 set(character_cs_t    	byte)
 set(skillid_t   	byte)
 
@@ -46,7 +46,20 @@ execute_process(
 	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
 
+file(GLOB_RECURSE All-src ${PROJECT_SOURCE_DIR}/Assets/Scripts/*.cs.in)
+
 add_subdirectory(Bare)
+
+foreach(src ${All-src})
+	get_filename_component(src-name ${src} NAME_WE)
+	get_filename_component(src-dir ${src} DIRECTORY)
+	set(dest ${src-dir}/${src-name}.cs)
+
+	configure_file(${PROJECT_SOURCE_DIR}/Bare/auto/cs/Types.cs ${dest})
+	file(READ ${src} src-content)
+	string(REPLACE ";" "\\;" dest-content "${src-content}")
+	file(APPEND ${dest} ${dest-content})
+endforeach()
 
 configure_file(
     ${PROJECT_SOURCE_DIR}/Bare/auto/cs/SockAddrSz.cs 
@@ -65,7 +78,7 @@ configure_file(
 
 configure_file(
     ${PROJECT_SOURCE_DIR}/Bare/auto/cs/TestPort.cs 
-    ${PROJECT_SOURCE_DIR}/Assets/Scripts/Test/Port.auto.cs
+    ${PROJECT_SOURCE_DIR}/Assets/Scripts/Tests/Port.auto.cs
     )
 
 if(WIN32)

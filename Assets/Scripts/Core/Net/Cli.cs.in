@@ -1,6 +1,3 @@
-using globplayer_t = System.UInt32;
-using room_t = System.UInt32;
-using player_t = System.UInt32;
 using System;
 using System.Runtime.InteropServices;
 
