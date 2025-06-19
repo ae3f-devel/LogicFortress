@@ -54,19 +54,6 @@ jobs:
         git fetch
         git pull
 
-    - name: Cleanup
-      uses: JesseTG/rm@v1.0.3
-      with:
-        path: ./Assets/Plugins
-
-    - name: Git Add Cleanup
-      run: |
-        git add ./Assets/Plugins
-
-    - name: Git Commit Cleanup
-      run: |
-        git commit -m "[CI/CD] Previous binaries removal"
-
     - name: Configure CMake
       run: |
         cmake -B build -S . -G Ninja
