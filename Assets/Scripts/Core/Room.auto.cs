@@ -15,9 +15,20 @@ namespace Core
         public const int MAX_ROOM_COUNT = 10;
         public const int MAX_ROOM_MEM_COUNT = 6 + 2;
 
-        public fixed sbyte m_Name[30];
+        internal fixed sbyte m_Name[30];
         public byte m_started;
-        public uint m_member;
+        public System.UInt32 m_member;
+
+        public string name
+        {
+            get
+            {
+                fixed (sbyte* _name = m_Name)
+                {
+                    return Marshal.PtrToStringAnsi((nint)_name);   
+                }
+            }
+        }
     }
 
     public struct RoomIndex {

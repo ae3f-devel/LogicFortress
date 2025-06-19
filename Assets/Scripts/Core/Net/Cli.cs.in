@@ -84,7 +84,16 @@ namespace Core.Net
         public unsafe static extern void ReqRoomShow(
             int svrsock, in SockAddr svraddr
             , room_t roompad, room_t roomcount, Room* retroom
-            , out uint retcount
+            , out room_t retcount
         );
+
+        /// <summary>
+        /// Get the current timeout when t is 0 or negative.
+        /// Set the current timeout when t is any positive value.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        [DllImport("libCli", CharSet = CharSet.Ansi)]
+        public unsafe static extern long SetTimeOut(long t);
     }
 }

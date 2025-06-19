@@ -2,7 +2,6 @@ using globplayer_t = System.UInt32;
 using room_t = System.UInt32;
 using player_t = System.UInt32;
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using Core;
 using Core.Net;
@@ -16,9 +15,9 @@ namespace Wrap.Net
     /// </summary>
     public struct Cli
     {
-        Sock sock;
-        SockAddr addr, roomaddr;
-        globplayer_t _gplayer;
+        internal Sock sock;
+        internal SockAddr addr, roomaddr;
+        internal globplayer_t _gplayer;
 
         public GlobPlayerIndex gplayer { get { 
 		GlobPlayerIndex idx ;
@@ -88,15 +87,16 @@ namespace Wrap.Net
             );
         }
 
-        unsafe public RoomArr ReqRoomShow(room_t startidx, room_t count)
+        unsafe public Room[] ReqRoomShow(room_t startidx, room_t count)
         {
-            RoomArr arr = new RoomArr((int)count);
+            Room[] arr = new Room[((int)count)];
             room_t ridx;
-            ridx = 0;
+            ridx = 2;
 
-            Debug.Log($"{startidx} {count}");
+            cCli.SetTimeOut(50);
+            Debug.Log($"{startidx} {count} {cCli.SetTimeOut(0)}");
 
-            fixed (Core.Room* rr = arr.r)
+            fixed (Room* rr = arr)
             {
                 cCli.ReqRoomShow(
                     this.sock.fd, this.addr
@@ -107,25 +107,27 @@ namespace Wrap.Net
 
             Debug.Log($"[ReqRoomShow] Successfully got {ridx} rooms.");
 
-	    if(ridx == 0) {
-		    return new RoomArr(0);
-	    }
+            if(ridx == 0) {
+                return new Room[0];
+            }
 
             if (ridx == RoomIndex.INVALID)
             {
                 Debug.LogError("[ReqRoomShow] has failed.");
-                return new RoomArr(0);
+                return new Room[0];
             }
-            else
+            else if(ridx < count)
             {
-                Core.Room[] a = new Core.Room[ridx];
+                Room[] a = new Room[ridx];
 
                 room_t i; i = 0;
 
                 for (; i < ridx; i++)
                 {
-                    a[i] = arr.r[i];
+                    a[i] = arr[i];
                 }
+
+                return a;
             }
 
             return arr;

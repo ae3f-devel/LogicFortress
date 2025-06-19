@@ -4,28 +4,41 @@ using Core;
 using Unity.VisualScripting;
 using ParrelSync;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace Tests
 {
     internal class LobbyShow : MonoBehaviour
     {
-        public void Awake()
+        unsafe public void Awake()
         {
 #if UNITY_EDITOR
-            if (true)
+            if (!ClonesManager.IsClone())
             {
+                Logger.AssignDebugLog();
+
                 Debug.Log("Hello World!");
                 int a = 0;
                 if (a == 0)
                 {
                     Wrap.Net.Cli cli = new Wrap.Net.Cli("127.0.0.1", Port.PORT);
-                    Wrap.RoomArr rooms = cli.ReqRoomShow(0, 5);
+                    var rooms = cli.ReqRoomShow(0, 5);
 
-                    foreach (Wrap.Room r in rooms)
+                    Debug.Log("Wrap room index");
+                    for (uint i = 0; i < rooms.Count(); i++)
+                    {
+                        Room r = rooms[i];
+                        Debug.Log($"Name: {r.name}");
+                        Debug.Log($"Started: {r.m_started}");
+                        Debug.Log($"Member count: {r.m_member}");
+                    }
+                    
+                    Debug.Log("Wrap foreach");
+                    foreach (Room r in rooms)
                     {
                         Debug.Log($"Name: {r.name}");
-                        Debug.Log($"Started: {r.r.m_started}");
-                        Debug.Log($"Member count: {r.r.m_member}");
+                        Debug.Log($"Started: {r.m_started}");
+                        Debug.Log($"Member count: {r.m_member}");
                     }
                 }
             }
