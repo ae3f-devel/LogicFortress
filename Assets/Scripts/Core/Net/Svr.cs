@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
 using Core;
-using Mono.Cecil.Cil;
 
 namespace Core.Net
 {
@@ -12,7 +11,7 @@ namespace Core.Net
         public static extern int SvrMain(ushort port);
 
         [DllImport("libSvrUDP", CharSet = CharSet.Ansi)]
-        public static extern int SvrExit();
+        public static extern void SvrExit();
 
         /// <summary>
         /// Singleton-Constructor.

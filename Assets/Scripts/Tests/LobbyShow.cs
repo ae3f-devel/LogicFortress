@@ -10,10 +10,15 @@ namespace Tests
 {
     internal class LobbyShow : MonoBehaviour
     {
+	public void OnDestroy() {
+                Logger.AssignDebugLog();
+		Core.Net.Svr.SvrExit();
+	}
+
         unsafe public void Awake()
         {
 #if UNITY_EDITOR
-            if (!ClonesManager.IsClone())
+            if (ClonesManager.IsClone())
             {
                 Logger.AssignDebugLog();
 
@@ -42,13 +47,13 @@ namespace Tests
                     }
                 }
             }
-#else
             else
             {
-                int d;
-                Svr a = new TestSvr(out d);
-                Debug.Log($"This is svr end: {d}");
-            }
+                Debug.Log("TestSvr is starting");
+		
+                // Svr a = new TestSvr(out d);
+		Core.Net.Svr.SvrMain(Port.PORT);
+	    }
 #endif
         }
     }
